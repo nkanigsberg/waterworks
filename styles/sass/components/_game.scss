@@ -1,0 +1,26 @@
+.game {
+	// apply border to game board
+	border: $gameBorder solid $primaryAccent;
+
+	// set dimensions of game board, taking border size into account
+	width: calc(#{$boardWidth} + (2 * #{$gameBorder}));
+	height: calc(#{$boardHeight} + (2 * #{$gameBorder}));
+
+	
+	display: grid;
+
+	grid-template-rows: repeat($rows, 1fr);
+	grid-template-columns: repeat($cols, 1fr);
+
+	&-container {
+		display: flex;
+		justify-content: center;
+	}
+
+}
+
+.square {
+	width: $pieceWidth;
+	height: $pieceHeight;
+	border: 1px solid $primaryAccent;
+}
