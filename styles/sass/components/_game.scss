@@ -12,6 +12,9 @@
 	grid-template-rows: repeat($rows, 1fr);
 	grid-template-columns: repeat($cols, 1fr);
 
+	// prevent select/highlighting
+	user-select: none;
+
 	&-container {
 		display: flex;
 		justify-content: center;
@@ -23,4 +26,8 @@
 	width: $pieceWidth;
 	height: $pieceHeight;
 	border: 1px solid $primaryAccent;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }

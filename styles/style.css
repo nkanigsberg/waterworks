@@ -301,6 +301,10 @@ body {
       grid-template-rows: repeat(8, 1fr);
   -ms-grid-columns: (1fr)[12];
       grid-template-columns: repeat(12, 1fr);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 .game-container {
@@ -316,4 +320,13 @@ body {
   width: 50px;
   height: 50px;
   border: 1px solid #FFFFFF;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }

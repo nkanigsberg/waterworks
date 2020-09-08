@@ -9,12 +9,16 @@ game.dimensions = {
 	rows: 8,
 };
 
+game.pipes = {
+	straight: '<img src="../assets/pipeStraight.svg" alt="Straight Pipe">',
+}
+
 
 /**
  * Build the gameboard
  * @param {object} param0 - object containing number of columns and rows to be generated
  */
-game.buildBoard = function({cols, rows}) {
+game.buildBoard = ({cols, rows}) => {
 	const boardArray = [];
 	const $game = $('.game');
 
@@ -29,29 +33,52 @@ game.buildBoard = function({cols, rows}) {
 
 			boardArray[y].push(position);
 
-			$game.append(`<div class="square"></div>`);
+			$game.append(`<div class="square" title="x: ${x}, y: ${y}" x="${x}" y="${y}"></div>`);
 		};
 	};
 
-	console.table(boardArray);
+	// console.table(boardArray);
 };
 
 
+game.addPiece = () => {
+	const $game = $('.game');
+
+	$game.find('[x="0"][y="0"]').append(game.pipes.straight);
+	// console.log($game.find('[x="0"][y="0"]'));
+	// console.log('pipe added');
+
+};
 
 
+/**
+ * Listen for click and place pipe on square
+ */
+game.clickSquare = () => {
+	const $game = $('.game');
+
+	$game.on('click', '.square', function() {
+		$(this).append(game.pipes.straight);
+		console.log($(this));
+	});
+
+};
 
 
 /**
  * Initialize Game
  */
-game.init = function() {
+game.init = () => {
 	game.buildBoard(game.dimensions);
+	// game.addPiece();
+
+	game.clickSquare();
 };
 
 
 /**
  * Document Ready
  */
-$(function() {
+$(() => {
 	game.init();
 });
