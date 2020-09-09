@@ -103,6 +103,23 @@ game.selectPipe = () => {
 };
 
 
+/**
+ * On right click, rotate pipe
+ */
+game.rotatePipe = () => {
+	const $pipesMenu = $('.pipes');
+
+	// disable context menu
+	$('body').on('contextmenu', function(e) {
+		e.preventDefault();
+	});
+
+	$pipesMenu.on('contextmenu', '.pipe', function() {
+		// TODO update rotate class
+			// Try string manipulation
+	});
+};
+
 
 /**
  * Initialize Game
@@ -116,6 +133,7 @@ game.init = () => {
 
 	game.placePipe();
 	game.selectPipe();
+	game.rotatePipe();
 
 };
 
