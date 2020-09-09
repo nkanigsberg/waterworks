@@ -17,7 +17,9 @@
 
 	&-container {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
+		align-items: center;
 	}
 
 }
@@ -30,4 +32,30 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.menu {
+	width: calc(#{$boardWidth} + (2 * #{$gameBorder}));
+	height: 150px;
+	border: $gameBorder solid $primaryAccent;
+	border-top: none;
+
+
+	.pipes {
+		display: flex;
+		justify-content: space-evenly;
+		align-items: center;
+
+		width: 60%;
+		height: 100%;
+
+		padding: 10px;
+
+		// all children in pipe menu
+		& > * {
+			width: 20%;
+		}
+
+	}
+
 }

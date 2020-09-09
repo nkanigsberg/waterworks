@@ -10,8 +10,12 @@ game.dimensions = {
 };
 
 game.pipes = {
-	straight: '<img src="../assets/pipeStraight.svg" alt="Straight Pipe">',
-}
+	straight: '<img class="straight pipe rotate0" src="../assets/pipeStraight.svg" alt="Straight Pipe">',
+	curved: '<img class="curved pipe rotate0" src="../assets/pipeCurved.svg" alt="Curved Pipe">',
+	fourWay: '<img class="fourWay pipe" src="../assets/pipeFourWay.svg" alt="Four-Way Pipe">',
+	current: '',
+};
+
 
 
 /**
@@ -54,15 +58,50 @@ game.addPiece = () => {
 /**
  * Listen for click and place pipe on square
  */
-game.clickSquare = () => {
+game.placePipe = () => {
 	const $game = $('.game');
 
 	$game.on('click', '.square', function() {
-		$(this).append(game.pipes.straight);
+		$(this).html(game.pipes.current);
 		console.log($(this));
 	});
 
 };
+
+
+game.buildMenu = () => {
+	const $pipesMenu = $('.pipes');
+
+	$pipesMenu.append(game.pipes.straight);
+	$pipesMenu.append(game.pipes.curved);
+	$pipesMenu.append(game.pipes.fourWay);
+};
+
+
+
+game.selectPipe = () => {
+	const $pipesMenu = $('.pipes');
+
+	$pipesMenu.on('click', '.pipe', function() {
+		let pipeType = $(this).attr('class');
+
+		// remove everything after space in pipeType in order to get only the first class name
+		pipeType = pipeType.substring(0, pipeType.indexOf(' '));
+
+		// console.log(pipeType);
+
+		game.pipes.current = game.pipes[pipeType];
+		// console.log(game.currentPipe);
+	});
+
+
+
+	// var str = "Abc: Lorem ipsum sit amet";
+	// str = str.substring(str.indexOf(":") + 1);
+	// console.log(str);
+
+};
+
 
 
 /**
@@ -70,9 +109,14 @@ game.clickSquare = () => {
  */
 game.init = () => {
 	game.buildBoard(game.dimensions);
+	game.buildMenu();
+
+
 	// game.addPiece();
 
-	game.clickSquare();
+	game.placePipe();
+	game.selectPipe();
+
 };
 
 
