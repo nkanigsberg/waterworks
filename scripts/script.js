@@ -1,21 +1,45 @@
+/** Class representing a pipe */
+class Pipe {
+	/**
+	 * Create a Pipe
+	 * @param {string} type
+	 * @param {number} column 
+	 * @param {number} row 
+	 * @param {number} rotation 
+	 */
+	constructor(type, column, row, rotation) {
+		this.type = type;
+		this.column = column;
+		this.row = row;
+		this.rotation = rotation;
+	};
+};
+
+
 /**
  * @namespace game
  */
 const game = {};
 
-/** @type {object} - the board dimensions */
+/** @type {object} - The board dimensions */
 game.dimensions = {
 	cols: 12,
 	rows: 8,
 };
 
+/** @type {object} The types of pipes in the game */
 game.pipes = {
 	straight: '<img class="straight pipe rotate0" src="../assets/pipeStraight.svg" alt="Straight Pipe">',
 	curved: '<img class="curved pipe rotate0" src="../assets/pipeCurved.svg" alt="Curved Pipe">',
-	fourWay: '<img class="fourWay pipe" src="../assets/pipeFourWay.svg" alt="Four-Way Pipe">',
+	fourWay: '<img class="fourWay pipe rotate0" src="../assets/pipeFourWay.svg" alt="Four-Way Pipe">',
 	current: '',
 };
 
+/** @type {array} The gameboard array */
+game.board = [];
+
+/** @type {array} The pipes in the menu */
+game.menuPipes = [];
 
 
 /**
@@ -41,7 +65,8 @@ game.buildBoard = ({cols, rows}) => {
 		};
 	};
 
-	// console.table(boardArray);
+	game.board = boardArray;
+	console.log(game.board);
 };
 
 
@@ -69,12 +94,21 @@ game.placePipe = () => {
 };
 
 
+/**
+ * Build the menu
+ */
 game.buildMenu = () => {
 	const $pipesMenu = $('.pipes');
 
-	$pipesMenu.append(game.pipes.straight);
-	$pipesMenu.append(game.pipes.curved);
-	$pipesMenu.append(game.pipes.fourWay);
+	game.menuPipes.push(new Pipe('straight', -1, -1, 0));
+	game.menuPipes.push(new Pipe('curved', -1, -1, 0));
+	game.menuPipes.push(new Pipe('fourWay', -1, -1, 0));
+	console.log(game.menuPipes);
+	
+	game.menuPipes.forEach((pipe, index) => {
+		$pipesMenu.append(game.pipes[pipe.type]);
+	});
+
 };
 
 
@@ -104,21 +138,53 @@ game.selectPipe = () => {
 
 
 /**
- * On right click, rotate pipe
+ * Rotate pipe on click
  */
 game.rotatePipe = () => {
+	
+	
+	
+	
 	const $pipesMenu = $('.pipes');
 
-	// disable context menu
-	$('body').on('contextmenu', function(e) {
-		e.preventDefault();
-	});
+	// // disable context menu
+	// $('body').on('contextmenu', function(e) {
+	// 	e.preventDefault();
+	// });
 
-	$pipesMenu.on('contextmenu', '.pipe', function() {
-		// TODO update rotate class
-			// Try string manipulation
+	$pipesMenu.on('click', '.pipe', function() {
 	});
 };
+
+
+/**
+ * Allow user to drag and drop pipes onto board
+ */
+game.dragAndDrop = () => {
+	// Make pipes draggable
+	$('.pipe').draggable({ 
+		revert: true,
+		start: function() {
+			let pipeType = $(this).attr('class');
+
+			// remove everything after space in pipeType in order to get only the first class name
+			pipeType = pipeType.substring(0, pipeType.indexOf(' '));
+
+			game.pipes.current = game.pipes[pipeType];
+		},
+	});
+
+	// Make squares droppable
+	$('.square').droppable({
+		drop: function(event, ui) {
+			$(this).html(game.pipes.current);
+		},
+		classes: {
+			"ui-droppable-hover": "ui-state-hover"
+		},
+	});
+};
+
 
 
 /**
@@ -131,10 +197,11 @@ game.init = () => {
 
 	// game.addPiece();
 
-	game.placePipe();
-	game.selectPipe();
-	game.rotatePipe();
+	// game.placePipe();
+	// game.selectPipe();
 
+	game.dragAndDrop();
+	game.rotatePipe();
 };
 
 

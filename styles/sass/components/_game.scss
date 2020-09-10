@@ -32,7 +32,27 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	&.ui-state-hover {
+		background-color: $uiHover;
+	}
 }
+
+.pipe {
+	&.rotate0 {
+		transform: rotate(0deg);
+	}
+	&.rotate1 {
+		transform: rotate(90deg);
+	}
+	&.rotate2 {
+		transform: rotate(180deg);
+	}
+	&.rotate3 {
+		transform: rotate(270deg);
+	}
+}
+
 
 .menu {
 	width: calc(#{$boardWidth} + (2 * #{$gameBorder}));
@@ -53,7 +73,7 @@
 
 		// all children in pipe menu
 		& > * {
-			width: 20%;
+			width: 15%;
 		}
 
 	}

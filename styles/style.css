@@ -338,6 +338,30 @@ body {
           align-items: center;
 }
 
+.square.ui-state-hover {
+  background-color: #c58b1e;
+}
+
+.pipe.rotate0 {
+  -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+}
+
+.pipe.rotate1 {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+}
+
+.pipe.rotate2 {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+.pipe.rotate3 {
+  -webkit-transform: rotate(270deg);
+          transform: rotate(270deg);
+}
+
 .menu {
   width: calc(600px + (2 * 5px));
   height: 150px;
@@ -361,5 +385,5 @@ body {
 }
 
 .menu .pipes > * {
-  width: 20%;
+  width: 15%;
 }
