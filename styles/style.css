@@ -342,6 +342,10 @@ body {
   background-color: #c58b1e;
 }
 
+.blocked .pipe {
+  opacity: 50%;
+}
+
 .pipe.rotate0 {
   -webkit-transform: rotate(0deg);
           transform: rotate(0deg);

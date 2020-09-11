@@ -38,6 +38,12 @@
 	}
 }
 
+.blocked {
+	.pipe {
+		opacity: 50%;
+	}
+}
+
 .pipe {
 	&.rotate0 {
 		transform: rotate(0deg);
@@ -77,5 +83,7 @@
 		}
 
 	}
+
+
 
 }

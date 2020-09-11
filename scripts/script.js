@@ -6,14 +6,12 @@ class Pipe {
 	 * @param {number} column 
 	 * @param {number} row 
 	 * @param {number} rotation 
-	 * @param {number} index
 	 */
-	constructor(type, column, row, rotation, index) {
+	constructor(type, column, row, rotation) {
 		this.type = type;
 		this.column = column;
 		this.row = row;
 		this.rotation = rotation;
-		this.index = index;
 	};
 
 	get htmlValue() {
@@ -33,16 +31,13 @@ class Pipe {
 				alt="${capitalizedType} Pipe"
 			`;
 
-			console.log(this.index);
-			if (this.index !== undefined) {
-				htmlResult += ` index="${this.index}"`
-			}
+			// console.log(this.index);
+			// if (this.index !== undefined) {
+			// 	htmlResult += ` index="${this.index}"`
+			// }
 
 			htmlResult += `>`;
 
-			// console.log(this);
-			// console.log(capitalizedType);
-			// console.log(htmlResult);
 		return htmlResult;
 	}
 
@@ -55,21 +50,15 @@ class Pipe {
  */
 const game = {};
 
-/** @type {object} - The board dimensions */
+/** @type {object} The board dimensions */
 game.dimensions = {
 	cols: 12,
 	rows: 8,
 };
 
-game.currentPipe = '';
+/** @type {object} The currently selected pipe */
+game.currentPipe = {};
 
-// /** @type {object} The types of pipes in the game */
-// game.pipes = {
-// 	straight: '<img class="straight pipe rotate0" src="../assets/pipeStraight.svg" alt="Straight Pipe">',
-// 	curved: '<img class="curved pipe rotate0" src="../assets/pipeCurved.svg" alt="Curved Pipe">',
-// 	fourWay: '<img class="fourWay pipe rotate0" src="../assets/pipeFourWay.svg" alt="Four-Way Pipe">',
-// 	current: '',
-// };
 
 /** @type {array} The gameboard array */
 game.board = [];
@@ -90,12 +79,13 @@ game.buildBoard = ({cols, rows}) => {
 		boardArray.push([]);
 
 		for (let x = 0; x < cols; x++) {
-			const position = {
+			const squareDetails = {
 				x: x,
 				y: y,
+				pipe: null,
 			};
 
-			boardArray[y].push(position);
+			boardArray[y].push(squareDetails);
 
 			$game.append(`<div class="square" title="x: ${x}, y: ${y}" x="${x}" y="${y}"></div>`);
 		};
@@ -124,7 +114,7 @@ game.placePipe = () => {
 
 	$game.on('click', '.square', function() {
 		$(this).html(game.pipes.current);
-		console.log($(this));
+		// console.log($(this));
 	});
 
 };
@@ -134,20 +124,29 @@ game.placePipe = () => {
  * Build the menu
  */
 game.buildMenu = () => {
-	const $pipesMenu = $('.pipes');
-
-	game.menuPipes.push(new Pipe('straight', -1, -1, 0, 0));
-	game.menuPipes.push(new Pipe('curved', -1, -1, 0, 1));
-	game.menuPipes.push(new Pipe('fourWay', -1, -1, 0, 2));
-	console.log(game.menuPipes);
-	
-	game.menuPipes.forEach((pipe, index) => {
-		console.log(pipe.htmlValue);
-		$pipesMenu.append(pipe.htmlValue);
-	});
-
+	while (game.menuPipes.length < 4) {
+		game.menuPipes.push(game.randomPipe());
+	};
+	// console.log(game.menuPipes);
+	game.refreshPipes();
 };
 
+game.refreshPipes = () => {
+	game.menuPipes.forEach((pipe, index) => {
+		$(`.pipe${index}`).html(pipe.htmlValue);
+	});
+};
+
+/**
+ * Return a random pipe type
+ * @returns {Pipe} A random pipe
+ */
+game.randomPipe = () => {
+	const pipeTypes = ['straight', 'curved', 'fourWay'];
+	const pipeType = pipeTypes[Math.floor(Math.random() * 3)];
+
+	return new Pipe(pipeType, -1, -1, 0, game.menuPipes.length);
+};
 
 
 game.selectPipe = () => {
@@ -178,11 +177,7 @@ game.selectPipe = () => {
  * Rotate pipe on click
  */
 game.rotatePipe = () => {
-	
-	
-	
-	
-	const $pipesMenu = $('.pipes');
+		const $pipesMenu = $('.pipes');
 
 	// // disable context menu
 	// $('body').on('contextmenu', function(e) {
@@ -190,7 +185,14 @@ game.rotatePipe = () => {
 	// });
 
 	$pipesMenu.on('click', '.pipe', function() {
+		const pipe = game.menuPipes[0];
+		const currentRotation = pipe.rotation;
+		console.log(currentRotation);
 
+		pipe.rotation = (pipe.rotation + 1) % 4;
+		console.log(pipe.rotation);
+
+		$(this).removeClass(`rotate${currentRotation}`).addClass(`rotate${pipe.rotation}`);
 	});
 };
 
@@ -200,10 +202,10 @@ game.rotatePipe = () => {
  */
 game.dragAndDrop = () => {
 	// Make pipes draggable
-	$('.pipe').draggable({ 
+	$('.pipe0 .pipe').draggable({ 
 		revert: true,
 		start: function() {
-			const index = $(this).attr('index');
+			const index = 0;
 			let pipeType = $(this).attr('class');
 
 			// remove everything after space in pipeType in order to get only the first class name
@@ -213,12 +215,27 @@ game.dragAndDrop = () => {
 			game.currentPipe = game.menuPipes[index];
 			console.log(game.currentPipe);
 		},
+		stack: '.pipe',
 	});
 
 	// Make squares droppable
-	$('.square').droppable({
-		drop: function(event, ui) {
-			$(this).html(game.currentPipe.htmlValue);
+	$('.game .square').droppable({
+		drop: function() {
+			const y = $(this).attr('y');
+			const x = $(this).attr('x');
+
+			if (!$(this).hasClass('occupied')) {
+				game.currentPipe.row = y;
+				game.currentPipe.column = x;
+
+				game.board[y][x].pipe = game.menuPipes.shift();
+				game.menuPipes.push(game.randomPipe());
+
+				$(this).addClass('occupied').html(game.currentPipe.htmlValue);
+				
+				game.refreshPipes();
+				game.dragAndDrop();
+			}
 		},
 		classes: {
 			"ui-droppable-hover": "ui-state-hover"
