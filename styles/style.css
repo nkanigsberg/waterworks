@@ -287,13 +287,23 @@ body {
 }
 
 body {
-  background-color: #2c2925;
-  color: #FFFFFF;
+  font-family: 'Dosis', sans-serif;
 }
 
 h1 {
   text-align: center;
-  padding: 2rem 0 3rem;
+  font-weight: bold;
+  letter-spacing: 0.075em;
+  font-size: 4.5rem;
+}
+
+body {
+  background-color: #2c2925;
+  color: #ffffff;
+}
+
+h1 {
+  padding: 2rem 0;
 }
 
 .game {

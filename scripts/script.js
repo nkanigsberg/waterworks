@@ -310,20 +310,35 @@ game.waterMove = ({start, end}) => {
 			game.board[start[1]][start[0]].pipe.makeWet();
 
 		} else {
+			// the number of pipes to remove from start of wetPipes array
+			let numPipesToRemove = 0;
+
 			// loop through wet pipes and make attached pipes wet
 			game.wetPipes.forEach((pipe) => {
-				console.log('wet pipe exits', pipe.exits);
+				// increment number of pipes to remove from wetPipes array
+				numPipesToRemove++;
 
 				// loop through exits for this pipe and fill attached pipes
 				pipe.exits.forEach((exit) => {
-					if (game.board[exit[1]][exit[0]].pipe !== null) {
+					const nextPipe = game.board[exit[1]][exit[0]].pipe;
+					if (nextPipe !== null) {
 
-						console.log('adjacent pipe:', game.board[exit[1]][exit[0]].pipe);
-
-						game.board[exit[1]][exit[0]].pipe.makeWet();
-					}
+						// loop through exits for attached pipe and check if connected to origin pipe
+						nextPipe.exits.forEach((exit) => {
+							if (exit[0] === pipe.column && exit[1] === pipe.row){
+								nextPipe.makeWet();
+							};
+						});
+					};
 				});
 			});
+
+			console.log(game.wetPipes);
+			// remove old pipes from wetPipes array
+			for (let i = 0; i < numPipesToRemove; i++) {
+				game.wetPipes.shift();
+			};
+			console.log(game.wetPipes);
 		};
 	};
 };
