@@ -1,4 +1,12 @@
+h1 {
+	text-align: center;
+	padding: 2rem 0 3rem;
+}
+
+
 .game {
+	background-color: $gameBackground;
+
 	// apply border to game board
 	border: $gameBorder solid $primaryAccent;
 
@@ -27,11 +35,23 @@
 .square {
 	width: $pieceWidth;
 	height: $pieceHeight;
-	// border: 0.5px solid $secondaryAccent;
 
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	.game & {
+		border: 0.5px solid $secondaryAccent;
+	}
+
+	.menu & {
+		cursor: pointer;
+
+		background-color: $menuPipeBackground;
+		border-radius: 15%;
+
+
+	}
 
 	&.ui-state-hover {
 		background-color: $uiHover;
@@ -61,6 +81,8 @@
 
 
 .menu {
+	background-color: $menuBackground;
+
 	width: calc(#{$boardWidth} + (2 * #{$gameBorder}));
 	height: 150px;
 	border: $gameBorder solid $primaryAccent;
@@ -68,20 +90,27 @@
 
 
 	.pipes {
-		display: flex;
-		justify-content: space-evenly;
-		align-items: center;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
 
-		width: 60%;
-		height: 100%;
+			width: 80%;
 
-		padding: 10px;
+		&-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
 
-		// all children in pipe menu
-		& > * {
-			width: 15%;
+			width: 60%;
+			height: 100%;
+
+			padding: 10px;
+
+			// all children in pipe menu
+			// & > * {
+			// 	width: 15%;
+			// }
 		}
-
 	}
 
 

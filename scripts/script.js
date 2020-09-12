@@ -5,43 +5,91 @@ class Pipe {
 	 * @param {string} type
 	 * @param {number} column 
 	 * @param {number} row 
-	 * @param {number} rotation 
+	 * @param {number} rotation
+	 * @param {boolean} wet
 	 */
-	constructor(type, column, row, rotation) {
+	constructor(type, column, row, rotation, wet) {
 		this.type = type;
 		this.column = column;
 		this.row = row;
 		this.rotation = rotation;
+		this.wet = wet;
 	};
 
 	get htmlValue() {
 		return this.htmlString();
 	};
 
+	get exits() {
+		return this.exitPoints();
+	}
+
+	/** the html string to append to board */
 	htmlString() {
-		console.log(this);
 		// capitalize first letter to work in URL
-		const capitalizedType = this.type.charAt(0).toUpperCase() + this.type.slice(1);
-		// const capitalizedType = this.type;
+		let capitalizedType = this.type.charAt(0).toUpperCase() + this.type.slice(1);
+
+		if (this.wet === true) {
+			capitalizedType += 'Wet';
+		};
 		
 		let htmlResult = 
 			`<img 
 				class="${this.type} pipe rotate${this.rotation}"
 				src="assets/pipe${capitalizedType}.svg"
 				alt="${capitalizedType} Pipe"
-			`;
-
-			// console.log(this.index);
-			// if (this.index !== undefined) {
-			// 	htmlResult += ` index="${this.index}"`
-			// }
-
-			htmlResult += `>`;
+			>`;
 
 		return htmlResult;
-	}
+	};
 
+	/** place this pipe on the board */
+	placeOnBoard() {
+		$(`.game .square[x="${this.column}"][y="${this.row}"]`).html(this.htmlValue);
+	};
 
+	/** Make this pipe wet */
+	makeWet() {
+		this.wet = true;
+		this.placeOnBoard();
+		game.wetPipes.push(this);
+	};
+
+	/** return the exit points of this pipe */
+	exitPoints() {
+		// start pipe
+		if (this.type === 'start' || this.type === 'startWet') {
+			return [[this.column + 1, this.row]];
+
+		// straight pipe
+		} else if (this.type === 'straight' || this.type === 'straightWet') {
+			if (this.rotation === 0 || this.rotation === 2) {
+				return [[this.column - 1, this.row], [this.column + 1, this.row]];
+			} else {
+				return [[this.column, this.row - 1], [this.column, this.row + 1]];
+			};
+
+		// curved pipe
+		} else if (this.type === 'curved' || this.type === 'curvedWet') {
+			if (this.rotation === 0) {
+				return [[this.column - 1, this.row], [this.column, this.row - 1]];
+			} else if (this.rotation === 1) {
+				return [[this.column, this.row - 1], [this.column + 1, this.row]];
+			} else if (this.rotation === 2) {
+				return [[this.column + 1, this.row], [this.column, this.row + 1]];
+			} else {
+				return [[this.column - 1, this.row], [this.column, this.row + 1]];
+			}
+
+		// fourWay pipe
+		} else if (this.type === 'fourWay') {
+			return [[this.column - 1, this.row], [this.column, this.row - 1], [this.column + 1, this.row], [this.column, this.row + 1]];
+
+		// end pipe
+		} else if (this.type === 'end') {
+			return [[this.column - 1, this.row]];
+		};
+	};
 };
 
 
@@ -59,15 +107,24 @@ game.dimensions = {
 /** @type {object} The currently selected pipe */
 game.currentPipe = {};
 
-
 /** @type {array} The gameboard array */
 game.board = [];
 
 /** @type {array} The pipes in the menu */
 game.menuPipes = [];
 
-/** @type {number} how many turns before the water starts */
-game.turnsUntilWater = 3;
+/** @type {number} how many turns have passed */
+game.turnCounter = 0;
+
+/** @type {Pipe} The start and endpoints */
+game.endPoints = {
+	start: [0, 1],
+	end: [game.dimensions.cols - 1, game.dimensions.rows - 2]
+};
+
+/** @type {array} Array containing the current wet pipes */
+game.wetPipes = [];
+
 
 /**
  * Build the gameboard
@@ -96,45 +153,33 @@ game.buildBoard = ({cols, rows}) => {
 	game.board = boardArray;
 	console.log(game.board);
 
-	game.addEndPieces();
+	game.addEndPieces(game.endPoints);
 };
 
 
 /**
  * Add the end pipes to the board
+ * @param {object} param0 - object containing the coordinates to place end pipes
  */
-game.addEndPieces = () => {
-	const startPos = [0, 1];
-	const endPos = [game.dimensions.cols - 1, game.dimensions.rows - 2];
+game.addEndPieces = ({start, end}) => {
 
-	console.log(endPos);
-	console.log(endPos[0]);
+	const startPipe = new Pipe('start', start[0], start[1], 0, false);
+	const endPipe = new Pipe('end', end[0], end[1], 0, false);
 
 	// add end pieces into array
-	game.board[startPos[1]][startPos[0]].pipe = new Pipe('start', startPos[0], startPos[1], 0);
-
-	game.board[endPos[1]][endPos[0]].pipe = new Pipe('end', endPos[0], endPos[1], 0);
-
+	game.board[start[1]][start[0]].pipe = startPipe;
+	game.board[end[1]][end[0]].pipe = endPipe;
 
 	// add end pieces onto html
-	$(`.game .square[x="${startPos[0]}"][y="${startPos[1]}"]`).html(game.board[startPos[1]][startPos[0]].pipe.htmlValue);
-	
-	$(`.game .square[x="${endPos[0]}"][y="${endPos[1]}"]`).html(game.board[endPos[1]][endPos[0]].pipe.htmlValue);
+	// $(`.game .square[x="${start[0]}"][y="${start[1]}"]`).html(game.board[start[1]][start[0]].pipe.htmlValue);
+
+	// $(`.game .square[x="${end[0]}"][y="${end[1]}"]`).html(game.board[end[1]][end[0]].pipe.htmlValue);
+
+	// console.log(game.board[start[1]][start[0]]);
+	game.board[start[1]][start[0]].pipe.placeOnBoard();
+
+	game.board[end[1]][end[0]].pipe.placeOnBoard();
 };
-
-
-
-// /**
-//  * Listen for click and place pipe on square
-//  */
-// game.placePipe = () => {
-// 	const $game = $('.game');
-
-// 	$game.on('click', '.square', function() {
-// 		$(this).html(game.pipes.current);
-// 		// console.log($(this));
-// 	});
-// };
 
 
 /**
@@ -161,7 +206,7 @@ game.refreshPipes = () => {
 game.randomPipe = () => {
 	// const pipeTypes = ['straight', 'curved', 'fourWay'];
 	const randomNum = Math.floor(Math.random() * 10);
-	console.table({randomNum});
+	// console.table({randomNum});
 	let pipeType = '';
 	
 	if (randomNum >= 9) {
@@ -172,25 +217,8 @@ game.randomPipe = () => {
 		pipeType = 'curved';
 	}
 	
-	return new Pipe(pipeType, -1, -1, 0);
+	return new Pipe(pipeType, -1, -1, 0, false);
 };
-
-
-// game.selectPipe = () => {
-// 	const $pipesMenu = $('.pipes');
-
-// 	$pipesMenu.on('click', '.pipe', function() {
-// 		let pipeType = $(this).attr('class');
-
-// 		// remove everything after space in pipeType in order to get only the first class name
-// 		pipeType = pipeType.substring(0, pipeType.indexOf(' '));
-
-// 		// console.log(pipeType);
-
-// 		game.pipes.current = game.pipes[pipeType];
-// 		// console.log(game.currentPipe);
-// 	});
-// };
 
 
 /**
@@ -198,11 +226,6 @@ game.randomPipe = () => {
  */
 game.rotatePipe = () => {
 		const $pipesMenu = $('.pipes');
-
-	// // disable context menu
-	// $('body').on('contextmenu', function(e) {
-	// 	e.preventDefault();
-	// });
 
 	$pipesMenu.on('click', '.pipe', function() {
 		const pipe = game.menuPipes[0];
@@ -221,40 +244,48 @@ game.rotatePipe = () => {
  * Allow user to drag and drop pipes onto board
  */
 game.dragAndDrop = () => {
-	// Make pipes draggable
-	$('.pipe0 .pipe').draggable({ 
-		revert: true,
-		start: function() {
-			const index = 0;
-			let pipeType = $(this).attr('class');
+	const dragListnener = () => {
+		// Make pipes draggable
+		$('.pipe0 .pipe').draggable({ 
+			revert: true,
+			start: function() {
+				const index = 0;
+				let pipeType = $(this).attr('class');
 
-			// remove everything after space in pipeType in order to get only the first class name
-			pipeType = pipeType.substring(0, pipeType.indexOf(' '));
-			console.log(index);
+				// remove everything after space in pipeType in order to get only the first class name
+				pipeType = pipeType.substring(0, pipeType.indexOf(' '));
+				console.log(index);
 
-			game.currentPipe = game.menuPipes[index];
-			console.log(game.currentPipe);
-		},
-		stack: '.pipe',
-	});
+				game.currentPipe = game.menuPipes[index];
+				console.log(game.currentPipe);
+			},
+			stack: '.pipe',
+		});
+	};
+
+	dragListnener();
 
 	// Make squares droppable
 	$('.game .square').droppable({
 		drop: function() {
-			const y = $(this).attr('y');
-			const x = $(this).attr('x');
+			const y = parseInt($(this).attr('y'));
+			const x = parseInt($(this).attr('x'));
 
-			if (!$(this).hasClass('occupied')) {
+			if (!game.board[y][x].pipe) {
 				game.currentPipe.row = y;
 				game.currentPipe.column = x;
 
 				game.board[y][x].pipe = game.menuPipes.shift();
 				game.menuPipes.push(game.randomPipe());
 
+				console.log('exits:', game.board[y][x].pipe.exits);
+
 				$(this).addClass('occupied').html(game.currentPipe.htmlValue);
 				
 				game.refreshPipes();
-				game.dragAndDrop();
+				dragListnener();
+
+				game.waterMove(game.endPoints);
 			}
 		},
 		classes: {
@@ -263,6 +294,39 @@ game.dragAndDrop = () => {
 	});
 };
 
+
+/**
+ * Move the water through the pipes
+ * @param {object} param0 - the start and end coordinates
+ */
+game.waterMove = ({start, end}) => {
+	game.turnCounter++;
+
+	// only start moving water after an initial number of turns
+	if (game.turnCounter > 3) {
+	
+		// if there are no wet pipes, make start pipe wet
+		if (game.wetPipes.length === 0) {
+			game.board[start[1]][start[0]].pipe.makeWet();
+
+		} else {
+			// loop through wet pipes and make attached pipes wet
+			game.wetPipes.forEach((pipe) => {
+				console.log('wet pipe exits', pipe.exits);
+
+				// loop through exits for this pipe and fill attached pipes
+				pipe.exits.forEach((exit) => {
+					if (game.board[exit[1]][exit[0]].pipe !== null) {
+
+						console.log('adjacent pipe:', game.board[exit[1]][exit[0]].pipe);
+
+						game.board[exit[1]][exit[0]].pipe.makeWet();
+					}
+				});
+			});
+		};
+	};
+};
 
 
 /**

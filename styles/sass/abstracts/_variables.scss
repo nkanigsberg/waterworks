@@ -1,13 +1,16 @@
 // colours
 	// background
-	$primaryBackground: #000000;
+	$primaryBackground: #2c2925;
+	$gameBackground: #443f38;
+	$menuBackground: #2c2925;
 
 	// font
 	$primaryFont: #FFFFFF;
 
 	// accent & pseudo-states
-	$primaryAccent: #cac6b3;
-	$secondaryAccent: #424242;
+	$primaryAccent: rgb(204, 200, 187);
+	$secondaryAccent: #202020;
+	$menuPipeBackground: #443f38;
 	$uiHover: #c58b1e;
 
 // game sizes
