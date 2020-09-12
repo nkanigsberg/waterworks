@@ -66,6 +66,8 @@ game.board = [];
 /** @type {array} The pipes in the menu */
 game.menuPipes = [];
 
+/** @type {number} how many turns before the water starts */
+game.turnsUntilWater = 3;
 
 /**
  * Build the gameboard
@@ -87,7 +89,7 @@ game.buildBoard = ({cols, rows}) => {
 
 			boardArray[y].push(squareDetails);
 
-			$game.append(`<div class="square" title="x: ${x}, y: ${y}" x="${x}" y="${y}"></div>`);
+			$game.append(`<div class="square" x="${x}" y="${y}"></div>`);
 		};
 	};
 
@@ -164,7 +166,7 @@ game.randomPipe = () => {
 	
 	if (randomNum >= 9) {
 		pipeType = 'fourWay';
-	} else if (randomNum >= 5) {
+	} else if (randomNum >= 6) {
 		pipeType = 'straight';
 	} else {
 		pipeType = 'curved';
