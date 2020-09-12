@@ -116,7 +116,7 @@ game.menuPipes = [];
 /** @type {number} how many turns have passed */
 game.turnCounter = 0;
 
-/** @type {Pipe} The start and endpoints */
+/** @type {object} The start and endpoints */
 game.endPoints = {
 	start: [0, 1],
 	end: [game.dimensions.cols - 1, game.dimensions.rows - 2]
@@ -311,25 +311,26 @@ game.waterMove = ({start, end}) => {
 
 		} else {
 			// the number of pipes to remove from start of wetPipes array
-			let numPipesToRemove = 0;
+			let numPipesToRemove = game.wetPipes.length;
+			console.log(numPipesToRemove);
 
 			// loop through wet pipes and make attached pipes wet
 			game.wetPipes.forEach((pipe) => {
-				// increment number of pipes to remove from wetPipes array
-				numPipesToRemove++;
-
 				// loop through exits for this pipe and fill attached pipes
 				pipe.exits.forEach((exit) => {
-					const nextPipe = game.board[exit[1]][exit[0]].pipe;
-					if (nextPipe !== null) {
+					
+					if (exit[0] >= 0 && exit[0] < game.dimensions.cols && exit[1] >= 0 && exit[1] < game.dimensions.rows) {
+						const nextPipe = game.board[exit[1]][exit[0]].pipe;
+						if (nextPipe !== null && nextPipe.wet === false) {
 
-						// loop through exits for attached pipe and check if connected to origin pipe
-						nextPipe.exits.forEach((exit) => {
-							if (exit[0] === pipe.column && exit[1] === pipe.row){
-								nextPipe.makeWet();
-							};
-						});
-					};
+							// loop through exits for attached pipe and check if connected to origin pipe
+							nextPipe.exits.forEach((exit) => {
+								if (exit[0] === pipe.column && exit[1] === pipe.row){
+									nextPipe.makeWet();
+								};
+							});
+						};
+					}
 				});
 			});
 
