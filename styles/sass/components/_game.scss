@@ -27,7 +27,7 @@
 .square {
 	width: $pieceWidth;
 	height: $pieceHeight;
-	border: 1px solid $primaryAccent;
+	// border: 0.5px solid $secondaryAccent;
 
 	display: flex;
 	justify-content: center;

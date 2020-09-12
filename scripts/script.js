@@ -93,31 +93,46 @@ game.buildBoard = ({cols, rows}) => {
 
 	game.board = boardArray;
 	console.log(game.board);
-};
 
-
-game.addPiece = () => {
-	const $game = $('.game');
-
-	$game.find('[x="0"][y="0"]').append(game.pipes.straight);
-	// console.log($game.find('[x="0"][y="0"]'));
-	// console.log('pipe added');
-
+	game.addEndPieces();
 };
 
 
 /**
- * Listen for click and place pipe on square
+ * Add the end pipes to the board
  */
-game.placePipe = () => {
-	const $game = $('.game');
+game.addEndPieces = () => {
+	const startPos = [0, 1];
+	const endPos = [game.dimensions.cols - 1, game.dimensions.rows - 2];
 
-	$game.on('click', '.square', function() {
-		$(this).html(game.pipes.current);
-		// console.log($(this));
-	});
+	console.log(endPos);
+	console.log(endPos[0]);
 
+	// add end pieces into array
+	game.board[startPos[1]][startPos[0]].pipe = new Pipe('start', startPos[0], startPos[1], 0);
+
+	game.board[endPos[1]][endPos[0]].pipe = new Pipe('end', endPos[0], endPos[1], 0);
+
+
+	// add end pieces onto html
+	$(`.game .square[x="${startPos[0]}"][y="${startPos[1]}"]`).html(game.board[startPos[1]][startPos[0]].pipe.htmlValue);
+	
+	$(`.game .square[x="${endPos[0]}"][y="${endPos[1]}"]`).html(game.board[endPos[1]][endPos[0]].pipe.htmlValue);
 };
+
+
+
+// /**
+//  * Listen for click and place pipe on square
+//  */
+// game.placePipe = () => {
+// 	const $game = $('.game');
+
+// 	$game.on('click', '.square', function() {
+// 		$(this).html(game.pipes.current);
+// 		// console.log($(this));
+// 	});
+// };
 
 
 /**
@@ -142,35 +157,38 @@ game.refreshPipes = () => {
  * @returns {Pipe} A random pipe
  */
 game.randomPipe = () => {
-	const pipeTypes = ['straight', 'curved', 'fourWay'];
-	const pipeType = pipeTypes[Math.floor(Math.random() * 3)];
-
-	return new Pipe(pipeType, -1, -1, 0, game.menuPipes.length);
+	// const pipeTypes = ['straight', 'curved', 'fourWay'];
+	const randomNum = Math.floor(Math.random() * 10);
+	console.table({randomNum});
+	let pipeType = '';
+	
+	if (randomNum >= 9) {
+		pipeType = 'fourWay';
+	} else if (randomNum >= 5) {
+		pipeType = 'straight';
+	} else {
+		pipeType = 'curved';
+	}
+	
+	return new Pipe(pipeType, -1, -1, 0);
 };
 
 
-game.selectPipe = () => {
-	const $pipesMenu = $('.pipes');
+// game.selectPipe = () => {
+// 	const $pipesMenu = $('.pipes');
 
-	$pipesMenu.on('click', '.pipe', function() {
-		let pipeType = $(this).attr('class');
+// 	$pipesMenu.on('click', '.pipe', function() {
+// 		let pipeType = $(this).attr('class');
 
-		// remove everything after space in pipeType in order to get only the first class name
-		pipeType = pipeType.substring(0, pipeType.indexOf(' '));
+// 		// remove everything after space in pipeType in order to get only the first class name
+// 		pipeType = pipeType.substring(0, pipeType.indexOf(' '));
 
-		// console.log(pipeType);
+// 		// console.log(pipeType);
 
-		game.pipes.current = game.pipes[pipeType];
-		// console.log(game.currentPipe);
-	});
-
-
-
-	// var str = "Abc: Lorem ipsum sit amet";
-	// str = str.substring(str.indexOf(":") + 1);
-	// console.log(str);
-
-};
+// 		game.pipes.current = game.pipes[pipeType];
+// 		// console.log(game.currentPipe);
+// 	});
+// };
 
 
 /**
