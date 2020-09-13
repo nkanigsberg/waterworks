@@ -533,6 +533,10 @@ h1 {
   color: #3295e6;
 }
 
+.controls .timer i {
+  padding-right: 0.8rem;
+}
+
 .controls .buttons {
   display: -webkit-box;
   display: -ms-flexbox;

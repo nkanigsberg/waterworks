@@ -87,8 +87,8 @@ class Pipe {
 
 		// end pipe
 		} else if (this.type === 'end') {
-			// return [[this.column - 1, this.row]];
-			return [];
+			return [[this.column - 1, this.row]];
+			// return [];
 		};
 	};
 };
@@ -225,6 +225,8 @@ game.chooseSettings = () => {
 		if (difficulty !== 'creative') {
 			game.intervalTimer(game.timer);
 			game.displayTimer();
+		} else {
+			$('.timer').html('<p><i class="fas fa-hammer"></i>Creative Mode</p>');
 		};
 	});
 };
@@ -240,8 +242,6 @@ game.buildMenu = () => {
 
 	game.refreshPipes();
 
-	// game.refreshTimer();
-
 	$('.timer span').text(`${game.timeToStart / 1000}`);
 };
 
@@ -256,12 +256,12 @@ game.refreshPipes = () => {
  * @returns {Pipe} A random pipe
  */
 game.randomPipe = () => {
-	const randomNum = Math.floor(Math.random() * 10);
+	const randomNum = Math.floor(Math.random() * 20);
 	let pipeType = '';
 	
-	if (randomNum >= 8) {
+	if (randomNum >= 17) {
 		pipeType = 'fourWay';
-	} else if (randomNum >= 5) {
+	} else if (randomNum >= 11) {
 		pipeType = 'straight';
 	} else {
 		pipeType = 'curved';
@@ -338,7 +338,7 @@ game.dragAndDrop = () => {
 						const nextPipe = game.board[exit[1]][exit[0]].pipe;
 						console.log(nextPipe);
 						// if the next pipe is connected
-						if (nextPipe && game.checkPipesConnected(game.currentPipe, nextPipe)) {
+						if (nextPipe && game.checkPipesConnected(game.currentPipe, nextPipe) && nextPipe.type !== 'end') {
 							canPlace = true;
 						};
 					};
@@ -369,11 +369,7 @@ game.dragAndDrop = () => {
  */
 game.waterMove = () => {
 	const { start, end } = game.endPoints;
-	// game.turnCounter++;
 
-	// only start moving water after an initial number of turns
-	// if (game.turnCounter > game.turnsToStart) {
-	
 		// if there are no wet pipes, make start pipe wet
 		if (game.wetPipes.length === 0) {
 			game.board[start[1]][start[0]].pipe.makeWet();
@@ -393,8 +389,6 @@ game.waterMove = () => {
 			};
 			// console.log(game.wetPipes);
 		};
-	// };
-	// game.refreshTimer();
 };
 
 
@@ -405,8 +399,6 @@ game.waterMove = () => {
 game.waterToAttachedPipes = (end) => {
 	game.wetPipes.forEach((pipe) => {
 		// loop through exits for this pipe and fill attached pipes
-
-
 		pipe.exits.forEach((exit) => {
 
 			// if not hitting a wall
@@ -414,16 +406,6 @@ game.waterToAttachedPipes = (end) => {
 				const nextPipe = game.board[exit[1]][exit[0]].pipe;
 				// if the next pipe exists and isn't wet
 				if (nextPipe !== null && !nextPipe.wet) {
-					// let connected = false;
-					// loop through exits for attached pipe and check if connected to origin pipe
-					// console.log(game.checkPipesConnected(pipe, nextPipe));
-					// nextPipe.exits.forEach((exit) => {
-					// 	// if the pipes are connected together
-					// 	if (exit[0] === pipe.column && exit[1] === pipe.row) {
-					// 		connected = true;
-					// 		nextPipe.makeWet();
-					// 	};
-					// });
 
 					// if pipes are connected, make next pipe wet
 					if (game.checkPipesConnected(pipe, nextPipe)) {
