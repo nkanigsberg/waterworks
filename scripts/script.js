@@ -293,24 +293,31 @@ game.dragAndDrop = () => {
 			const x = parseInt($(this).attr('x'));
 
 			if (!game.board[y][x].pipe) {
+				let canPlace = false;
 				game.currentPipe.row = y;
 				game.currentPipe.column = x;
 
 				// place new piece only if connected to an existing piece
 				game.currentPipe.exits.forEach((exit) => {
+					console.log(exit);
 					const nextPipe = game.board[exit[1]][exit[0]].pipe;
-					// if the next pipe exists and is connected
-					if (nextPipe !== null && game.checkPipesConnected(game.currentPipe, nextPipe)) {
-						game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
-						game.currentPipe.placeOnBoard();
-
-						game.menuPipes.push(game.randomPipe());
-						game.refreshPipes();
-
-						// refresh drag listener for new pipes
-						dragListnener();
-					};	
+					console.log(nextPipe);
+					// if the next pipe is connected
+					if (nextPipe && game.checkPipesConnected(game.currentPipe, nextPipe)) {
+						canPlace = true;
+					};
 				});
+
+				if (canPlace) {
+					game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
+					game.currentPipe.placeOnBoard();
+
+					game.menuPipes.push(game.randomPipe());
+					game.refreshPipes();
+
+					// refresh drag listener for new pipes
+					dragListnener();
+				}
 				// game.waterMove();
 			};
 		},
