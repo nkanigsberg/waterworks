@@ -118,6 +118,10 @@ h1 {
 			padding: 10px;
 		}
 	}
+
+	.hidden {
+		display: none;
+	}
 }
 
 .controls {
@@ -160,5 +164,21 @@ h1 {
 		width: 40%;
 
 		margin: 0.5rem;
+	}
+}
+
+.settings {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	form {
+		width: 60%;
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 }

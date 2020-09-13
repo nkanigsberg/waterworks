@@ -287,7 +287,7 @@ body {
 }
 
 body {
-  font-family: 'Bebas Neue', cursive;
+  font-family: 'Bebas Neue', sans-serif;
 }
 
 h1 {
@@ -298,9 +298,19 @@ h1 {
 }
 
 button {
-  font-family: 'Bebas Neue', cursive;
+  font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.3em;
   font-size: 2rem;
+}
+
+label {
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+}
+
+select {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
 }
 
 body {
@@ -321,6 +331,14 @@ button:hover, button:focus {
 
 button:active {
   border: 3px solid #c58b1e;
+}
+
+select {
+  font-size: 2rem;
+}
+
+label {
+  padding-right: 1rem;
 }
 
 h1 {
@@ -469,6 +487,10 @@ h1 {
   padding: 10px;
 }
 
+.menu .hidden {
+  display: none;
+}
+
 .controls {
   width: 40%;
   height: 100%;
@@ -523,4 +545,31 @@ h1 {
 .controls button {
   width: 40%;
   margin: 0.5rem;
+}
+
+.settings {
+  height: 100%;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.settings form {
+  width: 60%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }

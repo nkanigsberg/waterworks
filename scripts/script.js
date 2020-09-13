@@ -121,10 +121,10 @@ game.menuPipes = [];
 // game.turnsToStart = 5;
 
 /** @type {number} How much time before water starts moving */
-game.timeToStart = 8000;
+game.timeToStart = 0;
 
 /** @type {number} How much time between water moves */
-game.timer = 3000;
+game.timer = 0;
 
 /** @type {object} The start and endpoints */
 game.endPoints = {
@@ -194,6 +194,40 @@ game.addEndPieces = ({start, end}) => {
 	game.board[end[1]][end[0]].pipe.placeOnBoard();
 };
 
+
+/**
+ * Apply player settings and start game
+ */
+game.chooseSettings = () => {
+	$('.settings form').on('submit', function(e) {
+		e.preventDefault();
+		const difficulty = $('#difficulty').val();
+
+		if (difficulty === 'easy') {
+			game.timeToStart = 12000;
+			game.timer = 4000;
+		} else if (difficulty === 'medium') {
+			game.timeToStart = 8000;
+			game.timer = 3000;
+		} else if (difficulty === 'hard') {
+			game.timeToStart = 6000;
+			game.timer = 2000;
+		};
+
+		$('.settings').addClass('hidden');
+		$('.pipes-container, .controls').removeClass('hidden');
+
+		game.buildMenu();
+		game.dragAndDrop();
+		game.rotatePipe();
+		game.buttonClick();
+
+		if (difficulty !== 'creative') {
+			game.intervalTimer(game.timer);
+			game.displayTimer();
+		};
+	});
+};
 
 /**
  * Build the menu
@@ -299,12 +333,14 @@ game.dragAndDrop = () => {
 
 				// place new piece only if connected to an existing piece
 				game.currentPipe.exits.forEach((exit) => {
-					console.log(exit);
-					const nextPipe = game.board[exit[1]][exit[0]].pipe;
-					console.log(nextPipe);
-					// if the next pipe is connected
-					if (nextPipe && game.checkPipesConnected(game.currentPipe, nextPipe)) {
-						canPlace = true;
+					if (game.pipeNotHittingWall(exit)) {
+						console.log(exit);
+						const nextPipe = game.board[exit[1]][exit[0]].pipe;
+						console.log(nextPipe);
+						// if the next pipe is connected
+						if (nextPipe && game.checkPipesConnected(game.currentPipe, nextPipe)) {
+							canPlace = true;
+						};
 					};
 				});
 
@@ -374,7 +410,7 @@ game.waterToAttachedPipes = (end) => {
 		pipe.exits.forEach((exit) => {
 
 			// if not hitting a wall
-			if (exit[0] >= 0 && exit[0] < game.dimensions.cols && exit[1] >= 0 && exit[1] < game.dimensions.rows) {
+			if (game.pipeNotHittingWall(exit)) {
 				const nextPipe = game.board[exit[1]][exit[0]].pipe;
 				// if the next pipe exists and isn't wet
 				if (nextPipe !== null && !nextPipe.wet) {
@@ -438,6 +474,15 @@ game.checkPipesConnected = (pipe1, pipe2) => {
 	console.log(pipe2Connected);
 
 	return pipe1Connected & pipe2Connected;
+};
+
+/**
+ * Check if pipe exits into wall
+ * @param {array} exit - the exit points to check
+ * @returns {boolean} True if pipe doesn't exit into wall
+ */
+game.pipeNotHittingWall = (exit) => {
+	return exit[0] >= 0 && exit[0] < game.dimensions.cols && exit[1] >= 0 && exit[1] < game.dimensions.rows;
 };
 
 
@@ -512,12 +557,13 @@ game.buttonClick = () => {
  */
 game.init = () => {
 	game.buildBoard(game.dimensions);
-	game.buildMenu();
-	game.dragAndDrop();
-	game.rotatePipe();
-	game.buttonClick();
-	game.intervalTimer(game.timer);
-	game.displayTimer();
+	game.chooseSettings();
+	// game.buildMenu();
+	// game.dragAndDrop();
+	// game.rotatePipe();
+	// game.buttonClick();
+	// game.intervalTimer(game.timer);
+	// game.displayTimer();
 };
 
 

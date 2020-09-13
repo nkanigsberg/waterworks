@@ -22,7 +22,7 @@
 		</div>
 
 		<div class="menu">
-			<div class="pipes-container">
+			<div class="pipes-container hidden">
 				<!-- available pipes generated here -->
 				<div class="pipes">
 					<div class="square pipe0" pipe="0"></div>
@@ -32,7 +32,7 @@
 				</div>
 			</div>
 			
-			<div class="controls">
+			<div class="controls hidden">
 				<div class="timer">
 					<p>Water turning on in:</p>
 					<span><!-- timer goes here --></span>
@@ -43,6 +43,20 @@
 				</div>
 			</div>
 
+			<div class="settings">
+				<form action="#">
+					<div>
+						<label for="difficulty">Difficulty:</label>
+						<select name="difficulty" id="difficulty">
+							<option value="creative">Creative</option>
+							<option value="easy">Easy</option>
+							<option value="medium" selected>Medium</option>
+							<option value="hard">Hard</option>
+						</select>
+					</div>
+					<button type="submit">Start</button>
+				</form>
+			</div>
 		</div>
 
 	</div>

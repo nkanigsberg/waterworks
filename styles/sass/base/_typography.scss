@@ -1,5 +1,5 @@
 body {
-	font-family: 'Bebas Neue', cursive;
+	font-family: 'Bebas Neue', sans-serif;
 }
 
 h1 {
@@ -11,7 +11,17 @@ h1 {
 }
 
 button {
-	font-family: 'Bebas Neue', cursive;
+	font-family: 'Bebas Neue', sans-serif;
 	letter-spacing: 0.3em;
 	font-size: 2rem;
+}
+
+label {
+	font-size: 2rem;
+	letter-spacing: 0.05em;
+}
+
+select {
+	font-family: 'Bebas Neue', sans-serif;
+	letter-spacing: 0.05em;
 }
