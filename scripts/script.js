@@ -104,7 +104,7 @@ game.dimensions = {
 	rows: 8,
 };
 
-/** @type {object} The currently selected pipe */
+/** @type {Pipe} The currently selected pipe */
 game.currentPipe = {};
 
 /** @type {array} The gameboard array */
@@ -186,10 +186,11 @@ game.addEndPieces = ({start, end}) => {
  * Build the menu
  */
 game.buildMenu = () => {
+
 	while (game.menuPipes.length < 4) {
 		game.menuPipes.push(game.randomPipe());
 	};
-	// console.log(game.menuPipes);
+
 	game.refreshPipes();
 };
 
@@ -244,12 +245,15 @@ game.rotatePipe = () => {
  * Allow user to drag and drop pipes onto board
  */
 game.dragAndDrop = () => {
+	let index = 0;
 	const dragListnener = () => {
 		// Make pipes draggable
-		$('.pipe0 .pipe').draggable({ 
+		$('.pipes .pipe').draggable({ 
 			revert: true,
 			start: function() {
-				const index = 0;
+				index = parseInt($(this).parent('.square').attr('pipe'));
+				// console.log(index);
+
 				let pipeType = $(this).attr('class');
 
 				// remove everything after space in pipeType in order to get only the first class name
@@ -257,7 +261,7 @@ game.dragAndDrop = () => {
 				// console.log(index);
 
 				game.currentPipe = game.menuPipes[index];
-				// console.log(game.currentPipe);
+				console.log(game.currentPipe);
 			},
 			stack: '.pipe',
 		});
@@ -275,14 +279,15 @@ game.dragAndDrop = () => {
 				game.currentPipe.row = y;
 				game.currentPipe.column = x;
 
-				game.board[y][x].pipe = game.menuPipes.shift();
+				// game.board[y][x].pipe = game.menuPipes.shift();
+				game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
 				game.menuPipes.push(game.randomPipe());
-
-				console.log('exits:', game.board[y][x].pipe.exits);
+				game.refreshPipes();
+				
+				// console.log('exits:', game.board[y][x].pipe.exits);
 
 				$(this).addClass('occupied').html(game.currentPipe.htmlValue);
 				
-				game.refreshPipes();
 				dragListnener();
 
 				game.waterMove(game.endPoints);
@@ -410,3 +415,10 @@ game.init = () => {
 $(() => {
 	game.init();
 });
+
+
+game.test = () => {
+	$('.memoryCard').on('click', function() {
+		$(this).addClass('flip');
+	});
+}

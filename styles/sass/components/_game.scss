@@ -49,6 +49,10 @@ h1 {
 
 		background-color: $menuPipeBackground;
 		border-radius: 15%;
+
+		&:hover {
+			background-color: lighten($menuPipeBackground, 10);
+		}
 	}
 
 	&.ui-state-hover {

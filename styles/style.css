@@ -363,6 +363,10 @@ h1 {
   border-radius: 15%;
 }
 
+.menu .square:hover {
+  background-color: #60594f;
+}
+
 .square.ui-state-hover {
   background-color: #c58b1e;
 }
