@@ -87,7 +87,8 @@ class Pipe {
 
 		// end pipe
 		} else if (this.type === 'end') {
-			return [[this.column - 1, this.row]];
+			// return [[this.column - 1, this.row]];
+			return [];
 		};
 	};
 };
@@ -113,11 +114,17 @@ game.board = [];
 /** @type {array} The pipes in the menu */
 game.menuPipes = [];
 
-/** @type {number} how many turns have passed */
-game.turnCounter = 0;
+// /** @type {number} how many turns have passed */
+// game.turnCounter = 0;
 
-/** @type {number} how many turns until water starts */
-game.turnsToStart = 5;
+// /** @type {number} how many turns until water starts */
+// game.turnsToStart = 5;
+
+/** @type {number} How much time before water starts moving */
+game.timeToStart = 8000;
+
+/** @type {number} How much time between water moves */
+game.timer = 3000;
 
 /** @type {object} The start and endpoints */
 game.endPoints = {
@@ -199,7 +206,9 @@ game.buildMenu = () => {
 
 	game.refreshPipes();
 
-	game.refreshTimer();
+	// game.refreshTimer();
+
+	$('.timer span').text(`${game.timeToStart / 1000}`);
 };
 
 game.refreshPipes = () => {
@@ -274,6 +283,7 @@ game.dragAndDrop = () => {
 		});
 	};
 
+	// inital call of drag listener
 	dragListnener();
 
 	// Make squares droppable
@@ -286,18 +296,23 @@ game.dragAndDrop = () => {
 				game.currentPipe.row = y;
 				game.currentPipe.column = x;
 
-				// game.board[y][x].pipe = game.menuPipes.shift();
-				game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
-				game.menuPipes.push(game.randomPipe());
-				game.refreshPipes();
+				// place new piece only if connected to an existing piece
+				game.currentPipe.exits.forEach((exit) => {
+					const nextPipe = game.board[exit[1]][exit[0]].pipe;
+					// if the next pipe exists and is connected
+					if (nextPipe !== null && game.checkPipesConnected(game.currentPipe, nextPipe)) {
+						game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
+						game.currentPipe.placeOnBoard();
 
-				// $(this).addClass('occupied').html(game.currentPipe.htmlValue);
-				game.currentPipe.placeOnBoard();
-				
-				dragListnener();
+						game.menuPipes.push(game.randomPipe());
+						game.refreshPipes();
 
-				game.waterMove();
-			}
+						// refresh drag listener for new pipes
+						dragListnener();
+					};	
+				});
+				// game.waterMove();
+			};
 		},
 		classes: {
 			"ui-droppable-hover": "ui-state-hover"
@@ -311,10 +326,10 @@ game.dragAndDrop = () => {
  */
 game.waterMove = () => {
 	const { start, end } = game.endPoints;
-	game.turnCounter++;
+	// game.turnCounter++;
 
 	// only start moving water after an initial number of turns
-	if (game.turnCounter > game.turnsToStart) {
+	// if (game.turnCounter > game.turnsToStart) {
 	
 		// if there are no wet pipes, make start pipe wet
 		if (game.wetPipes.length === 0) {
@@ -335,8 +350,8 @@ game.waterMove = () => {
 			};
 			// console.log(game.wetPipes);
 		};
-	};
-	game.refreshTimer();
+	// };
+	// game.refreshTimer();
 };
 
 
@@ -439,16 +454,30 @@ game.win = () => {
 
 
 /**
- * Refresh the timer
+ * Move water on an interval
+ * @param {number} interval - the time interval between water movement
  */
-game.refreshTimer = () => {
+game.intervalTimer = (interval) => {
+	setInterval(() => {
+		if (game.timeToStart <= 0) {
+			game.waterMove();
+		};
+	}, interval);
+};
+
+/**
+ * Display the timer
+ */
+game.displayTimer = () => {
 	const $timer = $('.timer span');
-	const turnsLeft = game.turnsToStart - game.turnCounter;
-	if (turnsLeft >= 0) {
-		$timer.text(turnsLeft);
-	} else {
-		$timer.text('--');
-	};
+	setInterval(() => {
+		if (game.timeToStart > 0) {
+			game.timeToStart -= 1000;
+			$timer.text(`${game.timeToStart / 1000}`);
+		} else {
+			$timer.text('--');
+		};
+	}, 1000);
 };
 
 
@@ -480,6 +509,8 @@ game.init = () => {
 	game.dragAndDrop();
 	game.rotatePipe();
 	game.buttonClick();
+	game.intervalTimer(game.timer);
+	game.displayTimer();
 };
 
 
