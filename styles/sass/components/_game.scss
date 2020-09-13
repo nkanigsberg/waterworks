@@ -49,13 +49,15 @@ h1 {
 
 		background-color: $menuPipeBackground;
 		border-radius: 15%;
-
-
 	}
 
 	&.ui-state-hover {
 		background-color: $uiHover;
 	}
+}
+
+.leak {
+	background-color: $leak;
 }
 
 .blocked {

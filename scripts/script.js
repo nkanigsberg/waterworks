@@ -254,10 +254,10 @@ game.dragAndDrop = () => {
 
 				// remove everything after space in pipeType in order to get only the first class name
 				pipeType = pipeType.substring(0, pipeType.indexOf(' '));
-				console.log(index);
+				// console.log(index);
 
 				game.currentPipe = game.menuPipes[index];
-				console.log(game.currentPipe);
+				// console.log(game.currentPipe);
 			},
 			stack: '.pipe',
 		});
@@ -312,38 +312,79 @@ game.waterMove = ({start, end}) => {
 		} else {
 			// the number of pipes to remove from start of wetPipes array
 			let numPipesToRemove = game.wetPipes.length;
-			console.log(numPipesToRemove);
+			// console.log(numPipesToRemove);
 
-			// loop through wet pipes and make attached pipes wet
-			game.wetPipes.forEach((pipe) => {
-				// loop through exits for this pipe and fill attached pipes
-				pipe.exits.forEach((exit) => {
-					
-					if (exit[0] >= 0 && exit[0] < game.dimensions.cols && exit[1] >= 0 && exit[1] < game.dimensions.rows) {
-						const nextPipe = game.board[exit[1]][exit[0]].pipe;
-						if (nextPipe !== null && nextPipe.wet === false) {
+			// Loop through wet pipes and make attached pipes wet
+			game.waterToAttachedPipes(end);
+			// console.log(game.wetPipes);
 
-							// loop through exits for attached pipe and check if connected to origin pipe
-							nextPipe.exits.forEach((exit) => {
-								if (exit[0] === pipe.column && exit[1] === pipe.row){
-									nextPipe.makeWet();
-								};
-							});
-						};
-					}
-				});
-			});
-
-			console.log(game.wetPipes);
 			// remove old pipes from wetPipes array
 			for (let i = 0; i < numPipesToRemove; i++) {
 				game.wetPipes.shift();
 			};
-			console.log(game.wetPipes);
+			// console.log(game.wetPipes);
 		};
 	};
 };
 
+
+/**
+ * Loop through wet pipes and make attached pipes wet 
+ * @param {array} end - The end coordinates
+ * */
+game.waterToAttachedPipes = (end) => {
+	game.wetPipes.forEach((pipe) => {
+		// loop through exits for this pipe and fill attached pipes
+		pipe.exits.forEach((exit) => {
+
+			// if not hitting a wall
+			if (exit[0] >= 0 && exit[0] < game.dimensions.cols && exit[1] >= 0 && exit[1] < game.dimensions.rows) {
+				const nextPipe = game.board[exit[1]][exit[0]].pipe;
+				// if the next pipe exists and isn't wet
+				if (nextPipe !== null && !nextPipe.wet) {
+					let connected = false;
+					// loop through exits for attached pipe and check if connected to origin pipe
+					nextPipe.exits.forEach((exit) => {
+						// if the pipes are connected together
+						if (exit[0] === pipe.column && exit[1] === pipe.row) {
+							connected = true;
+							nextPipe.makeWet();
+						};
+					});
+					// if not connected, lose the game
+					if (!connected) {
+						game.lose(exit)
+					};
+				// if pipe doesn't exist, lose the game
+				} else if (nextPipe === null) {
+					game.lose(exit);
+				};
+			};
+
+			// if water flows into the endpoint, win the game
+			if (exit[0] === end[0] && exit[1] === end[1]) {
+				game.win();
+			};
+		});
+	});
+};
+
+
+/**
+ * Lose the game
+ * @param {array} param0 the coordinates of the leak
+ */
+game.lose = ([x, y]) => {
+	alert('Game over! Water is leaking!');
+	$(`.game .square[x="${x}"][y="${y}"]`).addClass('leak');
+};
+
+/**
+ * Win the game
+ */
+game.win = () => {
+	alert('You win!');
+};
 
 /**
  * Initialize Game

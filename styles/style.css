@@ -287,14 +287,14 @@ body {
 }
 
 body {
-  font-family: 'Dosis', sans-serif;
+  font-family: 'Bebas Neue', cursive;
 }
 
 h1 {
   text-align: center;
-  font-weight: bold;
-  letter-spacing: 0.075em;
-  font-size: 4.5rem;
+  letter-spacing: 0.3em;
+  font-size: 5rem;
+  text-decoration: underline;
 }
 
 body {
@@ -365,6 +365,10 @@ h1 {
 
 .square.ui-state-hover {
   background-color: #c58b1e;
+}
+
+.leak {
+  background-color: #3295e6;
 }
 
 .blocked .pipe {
