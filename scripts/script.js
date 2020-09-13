@@ -45,7 +45,7 @@ class Pipe {
 
 	/** place this pipe on the board */
 	placeOnBoard() {
-		$(`.game .square[x="${this.column}"][y="${this.row}"]`).html(this.htmlValue);
+		$(`.game .square[x="${this.column}"][y="${this.row}"]`).addClass('occupied').html(this.htmlValue);
 	};
 
 	/** Make this pipe wet */
@@ -124,6 +124,9 @@ game.endPoints = {
 
 /** @type {array} Array containing the current wet pipes */
 game.wetPipes = [];
+
+/** @type {boolean} True if game is over, false otherwise */
+game.over = false;
 
 
 /**
@@ -205,14 +208,12 @@ game.refreshPipes = () => {
  * @returns {Pipe} A random pipe
  */
 game.randomPipe = () => {
-	// const pipeTypes = ['straight', 'curved', 'fourWay'];
 	const randomNum = Math.floor(Math.random() * 10);
-	// console.table({randomNum});
 	let pipeType = '';
 	
-	if (randomNum >= 9) {
+	if (randomNum >= 8) {
 		pipeType = 'fourWay';
-	} else if (randomNum >= 6) {
+	} else if (randomNum >= 5) {
 		pipeType = 'straight';
 	} else {
 		pipeType = 'curved';
@@ -226,10 +227,11 @@ game.randomPipe = () => {
  * Rotate pipe on click
  */
 game.rotatePipe = () => {
-		const $pipesMenu = $('.pipes');
+	const $pipesMenu = $('.pipes');
 
 	$pipesMenu.on('click', '.pipe', function() {
-		const pipe = game.menuPipes[0];
+		const menuIndex = parseInt($(this).parent('.square').attr('pipe'));
+		const pipe = game.menuPipes[menuIndex];
 		const currentRotation = pipe.rotation;
 		console.log(currentRotation);
 
@@ -283,14 +285,13 @@ game.dragAndDrop = () => {
 				game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
 				game.menuPipes.push(game.randomPipe());
 				game.refreshPipes();
-				
-				// console.log('exits:', game.board[y][x].pipe.exits);
 
-				$(this).addClass('occupied').html(game.currentPipe.htmlValue);
+				// $(this).addClass('occupied').html(game.currentPipe.htmlValue);
+				game.currentPipe.placeOnBoard();
 				
 				dragListnener();
 
-				game.waterMove(game.endPoints);
+				game.waterMove();
 			}
 		},
 		classes: {
@@ -302,9 +303,9 @@ game.dragAndDrop = () => {
 
 /**
  * Move the water through the pipes
- * @param {object} param0 - the start and end coordinates
  */
-game.waterMove = ({start, end}) => {
+game.waterMove = () => {
+	const { start, end } = game.endPoints;
 	game.turnCounter++;
 
 	// only start moving water after an initial number of turns
@@ -340,6 +341,8 @@ game.waterMove = ({start, end}) => {
 game.waterToAttachedPipes = (end) => {
 	game.wetPipes.forEach((pipe) => {
 		// loop through exits for this pipe and fill attached pipes
+
+
 		pipe.exits.forEach((exit) => {
 
 			// if not hitting a wall
@@ -347,18 +350,23 @@ game.waterToAttachedPipes = (end) => {
 				const nextPipe = game.board[exit[1]][exit[0]].pipe;
 				// if the next pipe exists and isn't wet
 				if (nextPipe !== null && !nextPipe.wet) {
-					let connected = false;
+					// let connected = false;
 					// loop through exits for attached pipe and check if connected to origin pipe
-					nextPipe.exits.forEach((exit) => {
-						// if the pipes are connected together
-						if (exit[0] === pipe.column && exit[1] === pipe.row) {
-							connected = true;
-							nextPipe.makeWet();
-						};
-					});
-					// if not connected, lose the game
-					if (!connected) {
-						game.lose(exit)
+					// console.log(game.checkPipesConnected(pipe, nextPipe));
+					// nextPipe.exits.forEach((exit) => {
+					// 	// if the pipes are connected together
+					// 	if (exit[0] === pipe.column && exit[1] === pipe.row) {
+					// 		connected = true;
+					// 		nextPipe.makeWet();
+					// 	};
+					// });
+
+					// if pipes are connected, make next pipe wet
+					if (game.checkPipesConnected(pipe, nextPipe)) {
+						nextPipe.makeWet();
+					} else {
+						// if not connected, lose the game
+						game.lose(exit);
 					};
 				// if pipe doesn't exist, lose the game
 				} else if (nextPipe === null) {
@@ -376,12 +384,43 @@ game.waterToAttachedPipes = (end) => {
 
 
 /**
+ * Check if two pipes are connected
+ * @param {Pipe} pipe1 
+ * @param {Pipe} pipe2 
+ * @returns {boolean} true if connected, false if not
+ */
+game.checkPipesConnected = (pipe1, pipe2) => {
+	let pipe1Connected = false;
+	let pipe2Connected = false;
+
+	pipe1.exits.forEach((exit) => {
+		// if the pipes are connected together
+		if (exit[0] === pipe2.column && exit[1] === pipe2.row) {
+			pipe1Connected = true;
+		};
+	});
+	console.log(pipe1Connected);
+	
+	pipe2.exits.forEach((exit) => {
+		// if the pipes are connected together
+		if (exit[0] === pipe1.column && exit[1] === pipe1.row) {
+			pipe2Connected = true;
+		};
+	});
+	console.log(pipe2Connected);
+
+	return pipe1Connected & pipe2Connected;
+};
+
+
+/**
  * Lose the game
  * @param {array} param0 the coordinates of the leak
  */
 game.lose = ([x, y]) => {
-	alert('Game over! Water is leaking!');
 	$(`.game .square[x="${x}"][y="${y}"]`).addClass('leak');
+	alert('Game over! Water is leaking!');
+	game.over = true;
 };
 
 /**
@@ -389,7 +428,28 @@ game.lose = ([x, y]) => {
  */
 game.win = () => {
 	alert('You win!');
+	game.over = true;
 };
+
+
+/**
+ * Button Listeners
+ */
+game.buttonClick = () => {
+	// on click of done buttons move water to end
+	$('.controls .done').on('click', function() {
+		while (!game.over) {
+			game.waterMove();
+		};
+	});
+
+	// on click of restart button, refresh page
+	$('.controls .restart').on('click', function () {
+		location.reload();
+	});
+};
+
+
 
 /**
  * Initialize Game
@@ -397,15 +457,9 @@ game.win = () => {
 game.init = () => {
 	game.buildBoard(game.dimensions);
 	game.buildMenu();
-
-
-	// game.addPiece();
-
-	// game.placePipe();
-	// game.selectPipe();
-
 	game.dragAndDrop();
 	game.rotatePipe();
+	game.buttonClick();
 };
 
 

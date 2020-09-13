@@ -3,8 +3,14 @@ h1 {
 	// color: $primaryFont;
 }
 
+.game,
+.menu {
+	user-select: none;
+}
+
 
 .game {
+
 	background-color: $gameBackground;
 
 	// apply border to game board
@@ -55,7 +61,7 @@ h1 {
 		}
 	}
 
-	&.ui-state-hover {
+	&.ui-state-hover:not(.occupied) {
 		background-color: $uiHover;
 	}
 }
@@ -87,6 +93,10 @@ h1 {
 
 
 .menu {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
 	background-color: $menuBackground;
 
 	width: calc(#{$boardWidth} + (2 * #{$gameBorder}));
@@ -96,11 +106,11 @@ h1 {
 
 
 	.pipes {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 
-			width: 80%;
+		width: 80%;
 
 		&-container {
 			display: flex;
@@ -111,14 +121,20 @@ h1 {
 			height: 100%;
 
 			padding: 10px;
-
-			// all children in pipe menu
-			// & > * {
-			// 	width: 15%;
-			// }
 		}
 	}
+}
 
+.controls {
+	width: 40%;
+	display: flex;
+	// flex-direction: column;
+	justify-content: center;
+	align-items: center;
 
+	button {
+		width: 40%;
 
+		margin: 0.5rem;
+	}
 }

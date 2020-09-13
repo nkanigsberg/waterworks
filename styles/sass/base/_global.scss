@@ -2,3 +2,20 @@ body {
 	background-color: $primaryBackground;
 	color: $primaryFont;
 }
+
+button {
+	background-color: darken($primaryAccent, 10);
+	border: 3px solid $menuPipeBackground;
+	border-radius: 0.5rem;
+
+	padding: 0.8rem 2rem;
+
+	&:hover,
+	&:focus {
+		background-color: $primaryAccent;
+	}
+
+	&:active {
+		border: 3px solid $uiHover;
+	}
+}
