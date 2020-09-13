@@ -116,6 +116,9 @@ game.menuPipes = [];
 /** @type {number} how many turns have passed */
 game.turnCounter = 0;
 
+/** @type {number} how many turns until water starts */
+game.turnsToStart = 5;
+
 /** @type {object} The start and endpoints */
 game.endPoints = {
 	start: [0, 1],
@@ -195,6 +198,8 @@ game.buildMenu = () => {
 	};
 
 	game.refreshPipes();
+
+	game.refreshTimer();
 };
 
 game.refreshPipes = () => {
@@ -309,7 +314,7 @@ game.waterMove = () => {
 	game.turnCounter++;
 
 	// only start moving water after an initial number of turns
-	if (game.turnCounter > 3) {
+	if (game.turnCounter > game.turnsToStart) {
 	
 		// if there are no wet pipes, make start pipe wet
 		if (game.wetPipes.length === 0) {
@@ -331,6 +336,7 @@ game.waterMove = () => {
 			// console.log(game.wetPipes);
 		};
 	};
+	game.refreshTimer();
 };
 
 
@@ -429,6 +435,20 @@ game.lose = ([x, y]) => {
 game.win = () => {
 	alert('You win!');
 	game.over = true;
+};
+
+
+/**
+ * Refresh the timer
+ */
+game.refreshTimer = () => {
+	const $timer = $('.timer span');
+	const turnsLeft = game.turnsToStart - game.turnCounter;
+	if (turnsLeft >= 0) {
+		$timer.text(turnsLeft);
+	} else {
+		$timer.text('--');
+	};
 };
 
 
