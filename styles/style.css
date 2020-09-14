@@ -664,6 +664,9 @@ h1 {
 
 .instructions-leak img {
   width: calc(45px * 3);
+  -ms-flex-item-align: start;
+      -ms-grid-row-align: start;
+      align-self: start;
 }
 
 .signature {
