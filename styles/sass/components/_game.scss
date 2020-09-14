@@ -110,6 +110,7 @@ position: relative;
 
 		&-container {
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 
@@ -117,6 +118,15 @@ position: relative;
 			height: 100%;
 
 			padding: 10px;
+		}
+		&-instructions {
+			display: flex;
+			justify-content: space-evenly;
+
+			width: 100%;
+
+			position: relative;
+			top: 2rem;
 		}
 	}
 
@@ -176,13 +186,13 @@ position: relative;
 	height: 100%;
 	width: 100%;
 	display: flex;
-	justify-content: center;
+	justify-content: space-around;
 	align-items: center;
 
 	// position: relative;
 
 	form {
-		width: 60%;
+		width: 50%;
 
 		display: flex;
 		justify-content: space-between;
@@ -194,6 +204,14 @@ position: relative;
 	width: 40%;
 	height: 100%;
 
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	h2 {
+		text-align: center;
+	}
+
 	p {
 		display: flex;
 		align-items: center;
@@ -203,8 +221,24 @@ position: relative;
 
 .pipe-image {
 	display: inline-block;
-	height: 30px;
-	width: 30px;
+	height: 45px;
+	width: 45px;
+}
+
+.instructions-leak {
+	// padding-top: 0.5rem;
+
+	display: flex;
+	// align-items: ;
+	justify-content: space-around;
+	
+	p {
+		width: 9rem;
+	}
+
+	img {
+		width: calc(45px * 3);
+	}
 }
 
 

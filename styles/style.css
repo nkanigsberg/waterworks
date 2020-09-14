@@ -297,6 +297,11 @@ h1 {
   text-decoration: underline;
 }
 
+h2 {
+  font-size: 2.2rem;
+  letter-spacing: 0.05em;
+}
+
 button {
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.3em;
@@ -309,8 +314,18 @@ label {
 }
 
 select {
+  font-size: 1.8rem;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.05em;
+}
+
+p {
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+}
+
+.signature p {
+  font-size: 1.6rem;
 }
 
 body {
@@ -331,10 +346,6 @@ button:hover, button:focus {
 
 button:active {
   border: 3px solid #c58b1e;
-}
-
-select {
-  font-size: 2rem;
 }
 
 label {
@@ -485,6 +496,10 @@ h1 {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -494,6 +509,18 @@ h1 {
   width: 60%;
   height: 100%;
   padding: 10px;
+}
+
+.menu .pipes-instructions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  width: 100%;
+  position: relative;
+  top: 2rem;
 }
 
 .menu .hidden {
@@ -566,16 +593,15 @@ h1 {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
 }
 
 .settings form {
-  width: 60%;
+  width: 50%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -590,6 +616,20 @@ h1 {
 .instructions {
   width: 40%;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.instructions h2 {
+  text-align: center;
 }
 
 .instructions p {
@@ -606,8 +646,24 @@ h1 {
 
 .pipe-image {
   display: inline-block;
-  height: 30px;
-  width: 30px;
+  height: 45px;
+  width: 45px;
+}
+
+.instructions-leak {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.instructions-leak p {
+  width: 9rem;
+}
+
+.instructions-leak img {
+  width: calc(45px * 3);
 }
 
 .signature {
