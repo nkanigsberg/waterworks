@@ -27,3 +27,12 @@ select {
 label {
 	padding-right: 1rem;
 }
+
+a {
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		opacity: 60%;
+	}
+}

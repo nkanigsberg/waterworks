@@ -99,6 +99,7 @@ h1 {
 	border: $gameBorder solid $primaryAccent;
 	border-top: none;
 
+position: relative;
 
 	.pipes {
 		display: flex;
@@ -178,6 +179,8 @@ h1 {
 	justify-content: center;
 	align-items: center;
 
+	// position: relative;
+
 	form {
 		width: 60%;
 
@@ -185,4 +188,30 @@ h1 {
 		justify-content: space-between;
 		align-items: center;
 	}
+}
+
+.instructions {
+	width: 40%;
+	height: 100%;
+
+	p {
+		display: flex;
+		align-items: center;
+		justify-content: space-evenly;
+	}
+}
+
+.pipe-image {
+	display: inline-block;
+	height: 30px;
+	width: 30px;
+}
+
+
+.signature {
+	color: lighten($primaryAccent, 15);
+
+	position: absolute;
+	right: 0;
+	bottom: -26px;
 }

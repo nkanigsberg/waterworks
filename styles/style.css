@@ -341,6 +341,14 @@ label {
   padding-right: 1rem;
 }
 
+a {
+  text-decoration: underline;
+}
+
+a:hover, a:focus {
+  opacity: 60%;
+}
+
 h1 {
   padding: 2rem 0;
 }
@@ -457,6 +465,7 @@ h1 {
   height: 150px;
   border: 5px solid #ccc8bb;
   border-top: none;
+  position: relative;
 }
 
 .menu .pipes {
@@ -576,4 +585,34 @@ h1 {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.instructions {
+  width: 40%;
+  height: 100%;
+}
+
+.instructions p {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+}
+
+.pipe-image {
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+}
+
+.signature {
+  color: #edebe7;
+  position: absolute;
+  right: 0;
+  bottom: -26px;
 }

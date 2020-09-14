@@ -138,6 +138,13 @@ game.wetPipes = [];
 /** @type {boolean} True if game is over, false otherwise */
 game.over = false;
 
+/** @type {boolean} True if all pipes are full, false otherwise */
+game.pipesFull = false;
+
+/** @type {boolean} True if water has made it to the end pipe*/
+game.winCondition = false;
+
+
 
 /**
  * Build the gameboard
@@ -397,6 +404,8 @@ game.waterMove = () => {
  * @param {array} end - The end coordinates
  * */
 game.waterToAttachedPipes = (end) => {
+	let fullPipes = false;
+
 	game.wetPipes.forEach((pipe) => {
 		// loop through exits for this pipe and fill attached pipes
 		pipe.exits.forEach((exit) => {
@@ -482,6 +491,7 @@ game.lose = ([x, y]) => {
  * Win the game
  */
 game.win = () => {
+	game.winCondition = true;
 	alert('You win!');
 	game.over = true;
 };
@@ -521,9 +531,9 @@ game.displayTimer = () => {
 game.buttonClick = () => {
 	// on click of done buttons move water to end
 	$('.controls .done').on('click', function() {
-		while (!game.over) {
+		setInterval(() => {
 			game.waterMove();
-		};
+		}, 100);
 	});
 
 	// on click of restart button, refresh page
@@ -561,4 +571,9 @@ game.test = () => {
 	$('.memoryCard').on('click', function() {
 		$(this).addClass('flip');
 	});
+}
+
+
+function scroll(id) {
+		element.scrollIntoView(id)
 }

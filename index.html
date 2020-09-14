@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Waterworks</title>
-	<link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
 	<!-- google fonts -->
 	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 	<!-- fontawesome -->
@@ -13,54 +13,75 @@
 	<link rel="stylesheet" href="./styles/style.css">
 </head>
 <body>
-	<h1>Waterworks</h1>
+	<header>
+		<h1>Waterworks</h1>
+	</header>
 
-
-	<div class="game-container">
-		
-		<div class="game">
-			<!-- game content generated here -->
-		</div>
-
-		<div class="menu">
-			<div class="pipes-container hidden">
-				<!-- available pipes generated here -->
-				<div class="pipes">
-					<div class="square pipe0" pipe="0"></div>
-					<div class="square pipe1" pipe="1"></div>
-					<div class="square pipe2" pipe="2"></div>
-					<div class="square pipe3" pipe="3"></div>
-				</div>
-			</div>
+	<main>
+		<div class="game-container">
 			
-			<div class="controls hidden">
-				<div class="timer">
-					<p>Water turning on in:</p>
-					<span><!-- timer goes here --></span>
-				</div>
-				<div class="buttons">
-					<button class="restart" aria-label="Restart" title="Restart"><i class="fas fa-undo fa-fw"></i></button>
-					<button class="done" aria-label="Done" title="Done"><i class="fas fa-check fa-fw"></i></button>
-				</div>
+			<div class="game">
+				<!-- game content generated here -->
 			</div>
-
-			<div class="settings">
-				<form action="#">
-					<div>
-						<label for="difficulty">Difficulty:</label>
-						<select name="difficulty" id="difficulty">
-							<option value="creative">Creative</option>
-							<option value="easy">Easy</option>
-							<option value="medium" selected>Medium</option>
-							<option value="hard">Hard</option>
-						</select>
+	
+			<div class="menu">
+				<div class="pipes-container hidden">
+					<!-- available pipes generated here -->
+					<div class="pipes">
+						<div class="square pipe0" pipe="0"></div>
+						<div class="square pipe1" pipe="1"></div>
+						<div class="square pipe2" pipe="2"></div>
+						<div class="square pipe3" pipe="3"></div>
 					</div>
-					<button type="submit">Start</button>
-				</form>
+				</div>
+				
+				<div class="controls hidden">
+					<div class="timer">
+						<p><i class="far fa-clock"></i>Water turning on in:</p>
+						<span><!-- timer goes here --></span>
+					</div>
+					<div class="buttons">
+						<button class="restart" aria-label="Restart" title="Restart"><i class="fas fa-undo fa-fw"></i></button>
+						<button class="done" aria-label="Done" title="Done"><i class="fas fa-check fa-fw"></i></button>
+					</div>
+				</div>
+	
+				<!-- settings panel -->
+				<div class="settings">
+					<!-- instructions -->
+					<div class="instructions">
+						<h2>Instructions:</h2>
+						<p>Connect <span class="pipe-image"><img src="assets/pipeStart.svg" alt="Start Pipe"></span> with this <span class="pipe-image"><img src="assets/pipeEnd.svg" alt="End Pipe"></span></p>
+					</div>
+
+					<form action="#">
+						<div>
+							<label for="difficulty">Difficulty:</label>
+							<select name="difficulty" id="difficulty">
+								<option value="creative">Creative</option>
+								<option value="easy">Easy</option>
+								<option value="medium" selected>Medium</option>
+								<option value="hard">Hard</option>
+							</select>
+						</div>
+						<button type="submit">Start</button>
+					</form>
+					<!-- <div class="signature">
+						<p>Made at <a href="https://junocollege.com/">Juno College</a> by <a href="https://github.com/nkanigsberg">Nathan Kanigsberg</a></p>
+					</div> -->
+				</div>
+				<div class="signature">
+					<p>Made at <a href="https://junocollege.com/">Juno College</a> by <a href="https://github.com/nkanigsberg">Nathan
+							Kanigsberg</a></p>
+				</div>
 			</div>
 		</div>
 
-	</div>
+	</main>
+
+	<footer>
+		
+	</footer>
 
 	<!-- jQuery -->
 	<script src='https://code.jquery.com/jquery-3.5.1.min.js' 
