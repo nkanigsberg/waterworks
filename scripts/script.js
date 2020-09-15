@@ -377,6 +377,8 @@ game.dragAndDrop = () => {
 game.waterMove = () => {
 	const { start, end } = game.endPoints;
 
+	// if game isn't over
+	if (!game.over) {
 		// if there are no wet pipes, make start pipe wet
 		if (game.wetPipes.length === 0) {
 			game.board[start[1]][start[0]].pipe.makeWet();
@@ -396,6 +398,7 @@ game.waterMove = () => {
 			};
 			// console.log(game.wetPipes);
 		};
+	};
 };
 
 
@@ -483,7 +486,10 @@ game.pipeNotHittingWall = (exit) => {
  */
 game.lose = ([x, y]) => {
 	$(`.game .square[x="${x}"][y="${y}"]`).addClass('leak');
-	alert('Game over! Water is leaking!');
+	// alert('Game over! Water is leaking!');
+	if (!game.over) {
+		Swal.fire('Game over! Water is leaking!');
+	}
 	game.over = true;
 };
 
@@ -492,7 +498,10 @@ game.lose = ([x, y]) => {
  */
 game.win = () => {
 	game.winCondition = true;
-	alert('You win!');
+	// alert('You win!');
+	if (!game.over) {
+		Swal.fire('You win!');
+	}
 	game.over = true;
 };
 
@@ -515,7 +524,7 @@ game.intervalTimer = (interval) => {
 game.displayTimer = () => {
 	const $timer = $('.timer span');
 	setInterval(() => {
-		if (game.timeToStart > 0) {
+		if (game.timeToStart > 0 && !game.over) {
 			game.timeToStart -= 1000;
 			$timer.text(`${game.timeToStart / 1000}`);
 		} else {
