@@ -13,17 +13,22 @@
 	<link rel="stylesheet" href="./styles/style.css">
 </head>
 <body>
+
+	<!-- header -->
 	<header>
 		<h1>Waterworks</h1>
 	</header>
 
+	<!-- main -->
 	<main>
 		<div class="game-container">
-			
+
+			<!-- game board -->
 			<div class="game">
 				<!-- game content generated here -->
 			</div>
 	
+			<!-- game menu -->
 			<div class="menu">
 				<div class="pipes-container hidden">
 					<!-- available pipes generated here -->
@@ -33,18 +38,22 @@
 						<div class="square pipe2" pipe="2"></div>
 						<div class="square pipe3" pipe="3"></div>
 					</div>
+					
+					<!-- instructions -->
 					<div class="pipes-instructions">
 						<p>Click to rotate</p>
 						<p>Drag and drop to place</p>
 					</div>
 				</div>
 				
+				<!-- controls -->
 				<div class="controls hidden">
 					<div class="timer">
 						<p><i class="far fa-clock"></i>Water turning on in:</p>
 						<span><!-- timer goes here --></span>
 					</div>
 					
+					<!-- restart and done buttons -->
 					<div class="buttons">
 						<button class="restart" aria-label="Restart" title="Restart"><i class="fas fa-undo fa-fw"></i></button>
 						<button class="done" aria-label="Done" title="Done"><i class="fas fa-check fa-fw"></i></button>
@@ -62,9 +71,9 @@
 							<p>before the water leaks:</p>
 							<img src="assets/instructionsLeak.svg" alt="Leaking pipes">
 						</div>
-
 					</div>
 
+					<!-- difficulty select and game start -->
 					<form action="#">
 						<div>
 							<label for="difficulty">Difficulty:</label>
@@ -79,8 +88,10 @@
 					</form>
 				</div>
 
+				<!-- volume control -->
 				<div class="volume"><i class="fas fa-volume-up"  aria-label="volume control"></i></div>
 				
+				<!-- signature -->
 				<div class="signature">
 					<p>Made at <a href="https://junocollege.com/">Juno College</a> by <a href="https://github.com/nkanigsberg">Nathan
 							Kanigsberg</a></p>

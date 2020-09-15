@@ -114,12 +114,6 @@ game.board = [];
 /** @type {array} The pipes in the menu */
 game.menuPipes = [];
 
-// /** @type {number} how many turns have passed */
-// game.turnCounter = 0;
-
-// /** @type {number} how many turns until water starts */
-// game.turnsToStart = 5;
-
 /** @type {number} How much time before water starts moving */
 game.timeToStart = 0;
 
@@ -141,9 +135,6 @@ game.over = false;
 /** @type {boolean} True if all pipes are full, false otherwise */
 game.pipesFull = false;
 
-/** @type {boolean} True if water has made it to the end pipe*/
-game.winCondition = false;
-
 /** @type {string} The chosen difficulty */
 game.difficulty = '';
 
@@ -159,35 +150,36 @@ game.buildBoard = ({cols, rows}) => {
 	const boardArray = [];
 	const $game = $('.game');
 
+	// loop through y axis and add an array at each row
 	for (let y = 0; y < rows; y++) {
 		boardArray.push([]);
 
+		// loop through x axis and add a square object to each column
 		for (let x = 0; x < cols; x++) {
 			const squareDetails = {
 				x: x,
 				y: y,
 				pipe: null,
 			};
-
 			boardArray[y].push(squareDetails);
 
+			// add square element to html
 			$game.append(`<div class="square" x="${x}" y="${y}"></div>`);
 		};
 	};
 
+	// set global board variable equal to boardArray
 	game.board = boardArray;
-	console.log(game.board);
 
+	// add end pieces to board
 	game.addEndPieces(game.endPoints);
 };
-
 
 /**
  * Add the end pipes to the board
  * @param {object} param0 - object containing the coordinates to place end pipes
  */
 game.addEndPieces = ({start, end}) => {
-
 	const startPipe = new Pipe('start', start[0], start[1], 0, false);
 	const endPipe = new Pipe('end', end[0], end[1], 0, false);
 
@@ -195,26 +187,20 @@ game.addEndPieces = ({start, end}) => {
 	game.board[start[1]][start[0]].pipe = startPipe;
 	game.board[end[1]][end[0]].pipe = endPipe;
 
-	// add end pieces onto html
-	// $(`.game .square[x="${start[0]}"][y="${start[1]}"]`).html(game.board[start[1]][start[0]].pipe.htmlValue);
-
-	// $(`.game .square[x="${end[0]}"][y="${end[1]}"]`).html(game.board[end[1]][end[0]].pipe.htmlValue);
-
-	// console.log(game.board[start[1]][start[0]]);
+	// place end pieces on board
 	game.board[start[1]][start[0]].pipe.placeOnBoard();
-
 	game.board[end[1]][end[0]].pipe.placeOnBoard();
 };
 
-
 /**
- * Apply player settings and start game
+ * Apply player settings and start the game
  */
 game.chooseSettings = () => {
 	$('.settings form').on('submit', function(e) {
 		e.preventDefault();
 		const difficulty = $('#difficulty').val();
 
+		// set timer values depending on difficulty
 		if (difficulty === 'easy') {
 			game.timeToStart = 12000;
 			game.timer = 4000;
@@ -226,22 +212,28 @@ game.chooseSettings = () => {
 			game.timer = 2000;
 		};
 
+		// set global difficulty value equal to difficulty
 		game.difficulty = difficulty;
 
+		// hide settings and show game controls
 		$('.settings').addClass('hidden');
 		$('.pipes-container, .controls').removeClass('hidden');
 
-		game.buildMenu();
-		game.dragAndDrop();
-		game.rotatePipe();
-
+		// if not playing in creative mode, activate timers
 		if (difficulty !== 'creative') {
 			game.intervalTimer(game.timer);
 			game.displayTimer();
 		} else {
+			// display creative mode text
 			$('.timer').html('<p><i class="fas fa-hammer"></i>Creative Mode</p>');
 		};
+		// play sound on submit
 		game.playSound('assets/place.wav');
+
+		// run main game code
+		game.buildMenu();
+		game.dragAndDrop();
+		game.rotatePipe();
 	});
 };
 
@@ -249,17 +241,23 @@ game.chooseSettings = () => {
  * Build the menu
  */
 game.buildMenu = () => {
-
+	// add random pipe pieces to inventory
 	while (game.menuPipes.length < 4) {
 		game.menuPipes.push(game.randomPipe());
 	};
 
+	// refresh pipe inventory in html
 	game.refreshPipes();
 
+	// update timer
 	$('.timer span').text(`${game.timeToStart / 1000}`);
 };
 
+/**
+ * refresh pipe inventory in html
+ */
 game.refreshPipes = () => {
+	// loop through current menu pipe array and place on html
 	game.menuPipes.forEach((pipe, index) => {
 		$(`.pipe${index}`).html(pipe.htmlValue);
 	});
@@ -273,61 +271,56 @@ game.randomPipe = () => {
 	const randomNum = Math.floor(Math.random() * 20);
 	let pipeType = '';
 	
+	// weighted options for each pipe type
 	if (randomNum >= 17) {
-		pipeType = 'fourWay';
+		pipeType = 'fourWay'; //15%
 	} else if (randomNum >= 11) {
-		pipeType = 'straight';
+		pipeType = 'straight'; //30%
 	} else {
-		pipeType = 'curved';
+		pipeType = 'curved'; //55%
 	}
 	
 	return new Pipe(pipeType, -1, -1, 0, false);
 };
 
-
 /**
  * Rotate pipe on click
  */
 game.rotatePipe = () => {
-	const $pipesMenu = $('.pipes');
-
-	$pipesMenu.on('click', '.pipe', function() {
+	$('.pipes').on('click', '.pipe', function() {
 		const menuIndex = parseInt($(this).parent('.square').attr('pipe'));
 		const pipe = game.menuPipes[menuIndex];
 		const currentRotation = pipe.rotation;
-		console.log(currentRotation);
 
+		// increment rotation, loop back to 0 if reached last rotation
 		pipe.rotation = (pipe.rotation + 1) % 4;
-		console.log(pipe.rotation);
 
+		// rotate piece in html
 		$(this).removeClass(`rotate${currentRotation}`).addClass(`rotate${pipe.rotation}`);
 	});
 };
-
 
 /**
  * Allow user to drag and drop pipes onto board
  */
 game.dragAndDrop = () => {
 	let index = 0;
+	/** Listen for drag events */
 	const dragListnener = () => {
 		// Make pipes draggable
 		$('.pipes .pipe').draggable({ 
-			revert: true,
 			start: function() {
 				index = parseInt($(this).parent('.square').attr('pipe'));
-				// console.log(index);
-
 				let pipeType = $(this).attr('class');
 
 				// remove everything after space in pipeType in order to get only the first class name
 				pipeType = pipeType.substring(0, pipeType.indexOf(' '));
-				// console.log(index);
 
+				// set current pipe to dragged one
 				game.currentPipe = game.menuPipes[index];
-				console.log(game.currentPipe);
 			},
-			stack: '.pipe',
+			stack: '.pipe', //keep dragged pipe on top
+			revert: true, // move back to start position when dropped
 		});
 	};
 
@@ -340,6 +333,7 @@ game.dragAndDrop = () => {
 			const y = parseInt($(this).attr('y'));
 			const x = parseInt($(this).attr('x'));
 
+			// if there isn't a pipe at the drop coordinates
 			if (!game.board[y][x].pipe) {
 				let canPlace = false;
 				game.currentPipe.row = y;
@@ -347,10 +341,10 @@ game.dragAndDrop = () => {
 
 				// place new piece only if connected to an existing piece
 				game.currentPipe.exits.forEach((exit) => {
+					// if pipe isn't hitting a wall
 					if (game.pipeNotHittingWall(exit)) {
-						console.log(exit);
 						const nextPipe = game.board[exit[1]][exit[0]].pipe;
-						console.log(nextPipe);
+
 						// if the next pipe is connected
 						if (nextPipe && game.checkPipesConnected(game.currentPipe, nextPipe) && nextPipe.type !== 'end') {
 							canPlace = true;
@@ -358,27 +352,31 @@ game.dragAndDrop = () => {
 					};
 				});
 
+				// if pipe is placeable
 				if (canPlace) {
+					// move pipe from menu onto board
 					game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
+					// place into html
 					game.currentPipe.placeOnBoard();
-					
+
+					// play sound when placed
 					game.playSound('assets/place.wav');
 
+					// add new random pipe to menu
 					game.menuPipes.push(game.randomPipe());
 					game.refreshPipes();
 
 					// refresh drag listener for new pipes
 					dragListnener();
-				}
-				// game.waterMove();
+				};
 			};
 		},
+		// add hover state to droppable squares
 		classes: {
 			"ui-droppable-hover": "ui-state-hover"
 		},
 	});
 };
-
 
 /**
  * Move the water through the pipes
@@ -395,42 +393,38 @@ game.waterMove = () => {
 		} else {
 			// the number of pipes to remove from start of wetPipes array
 			let numPipesToRemove = game.wetPipes.length;
-			// console.log(numPipesToRemove);
 
 			// Loop through wet pipes and make attached pipes wet
 			game.waterToAttachedPipes(end);
-			// console.log(game.wetPipes);
 
 			// remove old pipes from wetPipes array
 			for (let i = 0; i < numPipesToRemove; i++) {
 				game.wetPipes.shift();
 			};
-			// console.log(game.wetPipes);
 		};
 	};
 	// set water started to true
 	game.waterStarted = true;
 };
 
-
 /**
  * Loop through wet pipes and make attached pipes wet 
  * @param {array} end - The end coordinates
  * */
 game.waterToAttachedPipes = (end) => {
-	let fullPipes = false;
-
 	game.wetPipes.forEach((pipe) => {
+
 		// loop through exits for this pipe and fill attached pipes
 		pipe.exits.forEach((exit) => {
 
 			// if not hitting a wall
 			if (game.pipeNotHittingWall(exit)) {
 				const nextPipe = game.board[exit[1]][exit[0]].pipe;
+
 				// if the next pipe exists and isn't wet
 				if (nextPipe !== null && !nextPipe.wet) {
 
-					// if pipes are connected, make next pipe wet
+					// and if pipes are connected, make next pipe wet
 					if (game.checkPipesConnected(pipe, nextPipe)) {
 						nextPipe.makeWet();
 					} else {
@@ -451,7 +445,6 @@ game.waterToAttachedPipes = (end) => {
 	});
 };
 
-
 /**
  * Check if two pipes are connected
  * @param {Pipe} pipe1 
@@ -468,7 +461,6 @@ game.checkPipesConnected = (pipe1, pipe2) => {
 			pipe1Connected = true;
 		};
 	});
-	console.log(pipe1Connected);
 	
 	pipe2.exits.forEach((exit) => {
 		// if the pipes are connected together
@@ -476,7 +468,6 @@ game.checkPipesConnected = (pipe1, pipe2) => {
 			pipe2Connected = true;
 		};
 	});
-	console.log(pipe2Connected);
 
 	return pipe1Connected & pipe2Connected;
 };
@@ -499,20 +490,25 @@ game.playSound = (sound) => {
 	if (!game.soundMuted) soundtoPlay.play();
 };
 
-
 /**
  * Lose the game
  * @param {array} param0 the coordinates of the leak
  */
 game.lose = ([x, y]) => {
+	// add water leak to html
 	$(`.game .square[x="${x}"][y="${y}"]`).addClass('leak');
+
+	// Play sound on lose
 	game.playSound('assets/water.wav');
+
+	// Game over popup
 	Swal.fire({
 		title: 'Game over! Water is leaking!',
 		icon: 'error',
 		background: '#b6b09e',
 		confirmButtonColor: '#c58b1e',
 	});
+	// set game to over
 	game.over = true;
 };
 
@@ -520,9 +516,12 @@ game.lose = ([x, y]) => {
  * Win the game
  */
 game.win = () => {
-	game.winCondition = true;
+	// Play sound on win
 	game.playSound('assets/win.wav');
+
+	// if game isn't over
 	if (!game.over) {
+		// game win popup
 		Swal.fire({
 			title:'You win!',
 			icon: 'success',
@@ -530,9 +529,9 @@ game.win = () => {
 			confirmButtonColor: '#c58b1e',
 		});
 	}
+	// set game to over
 	game.over = true;
 };
-
 
 /**
  * Move water on an interval
@@ -541,8 +540,12 @@ game.win = () => {
 game.intervalTimer = (interval) => {
 	let waterStarted = false;
 	setInterval(() => {
+		// if initial time is up
 		if (game.timeToStart <= 0) {
+			// move water
 			game.waterMove();
+
+			// play sound on water start
 			if (!waterStarted) game.playSound('assets/valve.wav');
 			waterStarted = true;
 		};
@@ -550,16 +553,19 @@ game.intervalTimer = (interval) => {
 };
 
 /**
- * Display the timer
+ * Display the timer in the html
  */
 game.displayTimer = () => {
 	const $timer = $('.timer span');
 	const displayInterval = setInterval(() => {
+		// if there is still time before water starts and game isn't over
 		if (game.timeToStart > 0 && !game.over) {
+			// decrment remaining time by 1s
 			game.timeToStart -= 1000;
+			// update html timer
 			$timer.text(`${game.timeToStart / 1000}`);
 		} else {
-			// $timer.text('--');
+			// if water has started, display difficulty setting instead of timer
 			$('.timer').html(`
 			<p class="difficulty">${game.difficulty} difficulty</p>
 			<p class="time">Water every ${game.timer / 1000} seconds</p>
@@ -569,14 +575,17 @@ game.displayTimer = () => {
 	}, 1000);
 };
 
-
 /**
  * Button Listeners
  */
 game.buttonClick = () => {
+
 	// on click of done buttons move water to end
 	$('.controls .done').on('click', function() {
+		// play sound on button click
 		game.playSound('assets/place.wav');
+
+		// move water to end quickly
 		setInterval(() => {
 			game.waterMove();
 		}, 100);
@@ -584,18 +593,24 @@ game.buttonClick = () => {
 
 	// on click of restart button, refresh page
 	$('.controls .restart').on('click', function() {
+		// play sound on button click
 		game.playSound('assets/place.wav');
+
+		// refresh page
 		location.reload();
 	});
 
 	// toggle audio with volume button click
 	$('.volume').on('click', function() {
 		const $volumeIcon = $('.volume i');
+		// toggle mute
 		game.soundMuted ? game.soundMuted = false : game.soundMuted = true;
 
+		// toggle mute icon
 		$volumeIcon.toggleClass('fa-volume-up fa-volume-mute');
 	});
 };
+
 
 /**
  * Initialize Game
@@ -604,14 +619,7 @@ game.init = () => {
 	game.buildBoard(game.dimensions);
 	game.chooseSettings();
 	game.buttonClick();
-	// game.buildMenu();
-	// game.dragAndDrop();
-	// game.rotatePipe();
-	// game.buttonClick();
-	// game.intervalTimer(game.timer);
-	// game.displayTimer();
 };
-
 
 /**
  * Document Ready
@@ -619,15 +627,3 @@ game.init = () => {
 $(() => {
 	game.init();
 });
-
-
-game.test = () => {
-	$('.memoryCard').on('click', function() {
-		$(this).addClass('flip');
-	});
-}
-
-
-function scroll(id) {
-		element.scrollIntoView(id)
-}

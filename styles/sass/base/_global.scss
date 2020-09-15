@@ -3,6 +3,10 @@ body {
 	color: $primaryFont;
 }
 
+h1 {
+	padding: 2rem 0;
+}
+
 button {
 	background-color: darken($primaryAccent, 10);
 	border: 3px solid $menuPipeBackground;

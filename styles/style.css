@@ -333,6 +333,10 @@ body {
   color: #ffffff;
 }
 
+h1 {
+  padding: 2rem 0;
+}
+
 button {
   background-color: #b6b09e;
   border: 3px solid #443f38;
@@ -358,10 +362,6 @@ a {
 
 a:hover, a:focus {
   opacity: 60%;
-}
-
-h1 {
-  padding: 2rem 0;
 }
 
 .game-container {
@@ -395,10 +395,6 @@ h1 {
       grid-template-rows: repeat(8, 1fr);
   -ms-grid-columns: (1fr)[12];
       grid-template-columns: repeat(12, 1fr);
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
 }
 
 .square {
