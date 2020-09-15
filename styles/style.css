@@ -298,8 +298,8 @@ h1 {
 }
 
 h2 {
-  font-size: 2.2rem;
-  letter-spacing: 0.05em;
+  font-size: 2.4rem;
+  letter-spacing: 0.2em;
 }
 
 button {
@@ -349,7 +349,7 @@ button:active {
 }
 
 label {
-  padding-right: 1rem;
+  padding-right: 0.5rem;
 }
 
 a {
@@ -542,37 +542,6 @@ h1 {
           justify-content: center;
 }
 
-.controls .timer {
-  text-align: center;
-  font-size: 2rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-
-.controls .timer p {
-  display: inline;
-}
-
-.controls .timer span {
-  font-size: 3rem;
-  padding: 0.8rem;
-}
-
-.controls .timer .blue {
-  color: #3295e6;
-}
-
-.controls .timer i {
-  padding-right: 0.8rem;
-}
-
 .controls .buttons {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -585,6 +554,49 @@ h1 {
 .controls button {
   width: 40%;
   margin: 0.5rem;
+}
+
+.timer {
+  text-align: center;
+  font-size: 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.timer p {
+  display: inline;
+}
+
+.timer p.difficulty {
+  font-size: 2.4rem;
+  letter-spacing: 0.1em;
+}
+
+.timer p.time {
+  font-size: 1.6rem;
+}
+
+.timer span {
+  font-size: 3rem;
+}
+
+.timer .blue {
+  color: #3295e6;
+}
+
+.timer i {
+  padding-right: 0.8rem;
 }
 
 .settings {
@@ -668,9 +680,22 @@ h1 {
       align-self: flex-start;
 }
 
+.volume,
 .signature {
   color: #edebe7;
   position: absolute;
-  right: 0;
   bottom: -26px;
+}
+
+.volume {
+  cursor: pointer;
+  left: 0;
+}
+
+.volume:hover, .volume:focus {
+  opacity: 70%;
+}
+
+.signature {
+  right: 0;
 }

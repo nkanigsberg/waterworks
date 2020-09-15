@@ -99,7 +99,7 @@ h1 {
 	border: $gameBorder solid $primaryAccent;
 	border-top: none;
 
-position: relative;
+	position: relative;
 
 	.pipes {
 		display: flex;
@@ -143,33 +143,6 @@ position: relative;
 	flex-direction: column;
 	justify-content: center;
 
-	.timer {
-		text-align: center;
-		font-size: 2rem;
-
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		p {
-			display: inline;
-		}
-
-		span {
-			font-size: 3rem;
-
-			padding: 0.8rem;
-		}
-
-		.blue {
-			color: $leak;
-		}
-
-		i {
-			padding-right: 0.8rem;
-		}
-	}
-
 	.buttons {
 		display: flex;
 		justify-content: center;
@@ -181,6 +154,43 @@ position: relative;
 		margin: 0.5rem;
 	}
 }
+
+.timer {
+	text-align: center;
+	font-size: 2rem;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	p {
+		display: inline;
+
+		&.difficulty {
+			font-size: 2.4rem;
+			letter-spacing: 0.1em;
+		}
+		&.time {
+			font-size: 1.6rem;
+		}
+	}
+
+	span {
+		font-size: 3rem;
+
+		// padding: 0.8rem;
+	}
+
+	.blue {
+		color: $leak;
+	}
+
+	i {
+		padding-right: 0.8rem;
+	}
+}
+
 
 .settings {
 	height: 100%;
@@ -243,10 +253,24 @@ position: relative;
 }
 
 
+.volume,
 .signature {
 	color: lighten($primaryAccent, 15);
-
+	
 	position: absolute;
-	right: 0;
 	bottom: -26px;
+}
+
+.volume {
+	cursor: pointer;
+	left: 0;
+
+	&:hover,
+	&:focus {
+		opacity: 70%;
+	}
+}
+
+.signature {
+	right: 0;
 }

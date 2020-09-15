@@ -144,6 +144,11 @@ game.pipesFull = false;
 /** @type {boolean} True if water has made it to the end pipe*/
 game.winCondition = false;
 
+/** @type {string} The chosen difficulty */
+game.difficulty = '';
+
+/** @type {boolean} True if sound is muted, false otherwise */
+game.soundMuted = false;
 
 
 /**
@@ -221,13 +226,14 @@ game.chooseSettings = () => {
 			game.timer = 2000;
 		};
 
+		game.difficulty = difficulty;
+
 		$('.settings').addClass('hidden');
 		$('.pipes-container, .controls').removeClass('hidden');
 
 		game.buildMenu();
 		game.dragAndDrop();
 		game.rotatePipe();
-		game.buttonClick();
 
 		if (difficulty !== 'creative') {
 			game.intervalTimer(game.timer);
@@ -235,6 +241,7 @@ game.chooseSettings = () => {
 		} else {
 			$('.timer').html('<p><i class="fas fa-hammer"></i>Creative Mode</p>');
 		};
+		game.playSound('assets/place.wav');
 	});
 };
 
@@ -354,6 +361,8 @@ game.dragAndDrop = () => {
 				if (canPlace) {
 					game.board[y][x].pipe = game.menuPipes.splice(index, 1)[0];
 					game.currentPipe.placeOnBoard();
+					
+					game.playSound('assets/place.wav');
 
 					game.menuPipes.push(game.randomPipe());
 					game.refreshPipes();
@@ -479,6 +488,15 @@ game.pipeNotHittingWall = (exit) => {
 	return exit[0] >= 0 && exit[0] < game.dimensions.cols && exit[1] >= 0 && exit[1] < game.dimensions.rows;
 };
 
+/**
+ * Play the sound passed as an argument
+ * @param {string} sound 
+ */
+game.playSound = (sound) => {
+	const soundtoPlay = new Audio(sound);
+	if (!game.soundMuted) soundtoPlay.play();
+};
+
 
 /**
  * Lose the game
@@ -486,10 +504,13 @@ game.pipeNotHittingWall = (exit) => {
  */
 game.lose = ([x, y]) => {
 	$(`.game .square[x="${x}"][y="${y}"]`).addClass('leak');
-	// alert('Game over! Water is leaking!');
-	if (!game.over) {
-		Swal.fire('Game over! Water is leaking!');
-	}
+	game.playSound('assets/water.wav');
+	Swal.fire({
+		title: 'Game over! Water is leaking!',
+		icon: 'error',
+		background: '#b6b09e',
+		confirmButtonColor: '#c58b1e',
+	});
 	game.over = true;
 };
 
@@ -498,9 +519,14 @@ game.lose = ([x, y]) => {
  */
 game.win = () => {
 	game.winCondition = true;
-	// alert('You win!');
+	game.playSound('assets/win.wav');
 	if (!game.over) {
-		Swal.fire('You win!');
+		Swal.fire({
+			title:'You win!',
+			icon: 'success',
+			background: '#b6b09e',
+			confirmButtonColor: '#c58b1e',
+		});
 	}
 	game.over = true;
 };
@@ -523,12 +549,17 @@ game.intervalTimer = (interval) => {
  */
 game.displayTimer = () => {
 	const $timer = $('.timer span');
-	setInterval(() => {
+	const displayInterval = setInterval(() => {
 		if (game.timeToStart > 0 && !game.over) {
 			game.timeToStart -= 1000;
 			$timer.text(`${game.timeToStart / 1000}`);
 		} else {
-			$timer.text('--');
+			// $timer.text('--');
+			$('.timer').html(`
+			<p class="difficulty">${game.difficulty} difficulty</p>
+			<p class="time">Water every ${game.timer / 1000} seconds</p>
+			`);
+			clearInterval(displayInterval);
 		};
 	}, 1000);
 };
@@ -540,18 +571,26 @@ game.displayTimer = () => {
 game.buttonClick = () => {
 	// on click of done buttons move water to end
 	$('.controls .done').on('click', function() {
+		game.playSound('assets/place.wav');
 		setInterval(() => {
 			game.waterMove();
 		}, 100);
 	});
 
 	// on click of restart button, refresh page
-	$('.controls .restart').on('click', function () {
+	$('.controls .restart').on('click', function() {
+		game.playSound('assets/place.wav');
 		location.reload();
 	});
+
+	// toggle audio with volume button click
+	$('.volume').on('click', function() {
+		const $volumeIcon = $('.volume i');
+		game.soundMuted ? game.soundMuted = false : game.soundMuted = true;
+
+		$volumeIcon.toggleClass('fa-volume-up fa-volume-mute');
+	});
 };
-
-
 
 /**
  * Initialize Game
@@ -559,6 +598,7 @@ game.buttonClick = () => {
 game.init = () => {
 	game.buildBoard(game.dimensions);
 	game.chooseSettings();
+	game.buttonClick();
 	// game.buildMenu();
 	// game.dragAndDrop();
 	// game.rotatePipe();
