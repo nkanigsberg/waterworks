@@ -408,6 +408,8 @@ game.waterMove = () => {
 			// console.log(game.wetPipes);
 		};
 	};
+	// set water started to true
+	game.waterStarted = true;
 };
 
 
@@ -537,9 +539,12 @@ game.win = () => {
  * @param {number} interval - the time interval between water movement
  */
 game.intervalTimer = (interval) => {
+	let waterStarted = false;
 	setInterval(() => {
 		if (game.timeToStart <= 0) {
 			game.waterMove();
+			if (!waterStarted) game.playSound('assets/valve.wav');
+			waterStarted = true;
 		};
 	}, interval);
 };
